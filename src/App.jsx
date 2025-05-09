@@ -8,6 +8,7 @@ import Search  from "./pages/Search";
 import Profile  from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 import Logout   from "./pages/Logout";
+import Marketplace from "./pages/Marketplace";
 
 import "./App.css";
 
@@ -23,6 +24,7 @@ export default function App() {
           <Routes>
             <Route path="/"        element={<Home />} />
             <Route path="/search"  element={<Search />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/profile"   element={<Profile />} />
             <Route path="/settings"  element={<SettingsPage />} />
             <Route path="/logout"    element={<Logout />} />
