@@ -1,6 +1,5 @@
-/* src/Navbar.css */
 .navbar {
-  background: #1a1a1a;       /* black background */
+  background: #242424;       /* black background */
   color: white;            /* white text */
   display: flex;           /* horizontal layout */
   justify-content: space-between; /* push ends apart */
@@ -8,18 +7,46 @@
   padding: 1.5rem;           /* some breathing room */
 }
 
-.navbar a {
-  color: inherit;          /* stay white */
-  margin: 0 1.5rem;        /* space between links */
-  text-decoration: none;   /* no underline */
+.navbar-left {
+  display: flex;
+  gap: 2.5rem;
 }
 
-.navbar a:hover {
-  opacity: 0.8;            /* subtle hover effect */
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 0.25rem;
+}
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 2px;
+  background: #e3342f;
+  bottom: -25px;
 }
 
-
-/* style the right‐side user info */
 .navbar-right {
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
+
+/* Dark mode toggle button */
+.mode-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Profile picture */
+.profile-pic {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+

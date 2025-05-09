@@ -1,48 +1,19 @@
 .app-container {
   display: flex;
   height: 100vh;
-  background-color: #242424;
+  width: 100vw;
+  background-color: #1a1a1a;
   color: white;
 }
 
-/* in App.css (or Sidebar.css) */
-.sidebar {
-  box-sizing: border-box;   
-  height: 100vh;
-  width: 4rem;
-  background: #1a1a1a;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 2rem 0;
-  gap: 2rem;
-}
 
-
-
-.sidebar-icon {
-  color: white;
-  cursor: pointer;
-}
-.sidebar-icon:hover {
-  color: #E13432;
-}
-
-
-
-/* This wrapper fills the remaining space */
 .main-area {
-  flex: 1;                    /* ← take all leftover width */
+  flex: 1;                    
   display: flex;
   flex-direction: column;
+  margin-left: 4.5em;   
+   border-radius: 0.75rem;  
 }
-
-/* Top navbar bar */
-/* App.css */
-
-
-
 
 /* Your search bar container (optional spacing) */
 .searchbar {
