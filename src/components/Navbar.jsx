@@ -28,7 +28,7 @@ export default function Navbar() {
 
         {/* 2) Profile avatar */}
         <img 
-          src="/avatar.jpg" 
+          src="/avatar.png" 
           alt="Profile" 
           className="profile-pic" 
         />

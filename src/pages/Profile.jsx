@@ -6,7 +6,7 @@ export default function Profile() {
     <div className="profile-page">
       <div className="profile-header">
         <div className="profile-left">
-          <img src="/avatar.jpg" alt="Profile" className="profile-pic-large" />
+          <img src="/avatar.png" alt="Profile" className="profile-pic-large" />
           <h2>
             Bessie Cooper <span className="verified-badge">✔</span>
           </h2>
@@ -16,11 +16,11 @@ export default function Profile() {
 
           <div className="contact-info">
             <div>
-              <img src="/icons/mail.svg" alt="email" />
+              <img src="/public/mail.png" alt="email" />
               BessieC@gmail.com
             </div>
             <div>
-              <img src="/icons/phone.svg" alt="phone" />
+              <img src="/public/phone.png" alt="phone" />
               648-991-2764
             </div>
           </div>
@@ -29,7 +29,7 @@ export default function Profile() {
         <div className="profile-right">
           <h2>Activity</h2>
           <div className="card-activity">
-            <img src="/cards/pikachu.png" alt="card" />
+            <img src="/public/pokeball.png" alt="card" />
             <div>
               <strong>Pikachu with Grey Felt Hat</strong>
               <p>Near Mint • Holofoil</p>
@@ -39,7 +39,7 @@ export default function Profile() {
           </div>
 
           <div className="card-activity">
-            <img src="/cards/pikachu.png" alt="card" />
+            <img src="/public/pokeball.png" alt="card" />
             <div>
               <strong>Pikachu with Grey Felt Hat</strong>
               <p>Near Mint • Holofoil</p>

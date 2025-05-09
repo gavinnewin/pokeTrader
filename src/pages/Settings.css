@@ -34,6 +34,12 @@
   width: 24px;
   height: 24px;
 }
+.setting-icon {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+}
+
 
 .settings-btn {
   background-color: #888;
