@@ -1,0 +1,25 @@
+/* src/Navbar.css */
+.navbar {
+  background: #1a1a1a;       /* black background */
+  color: white;            /* white text */
+  display: flex;           /* horizontal layout */
+  justify-content: space-between; /* push ends apart */
+  align-items: center;     /* vertically center items */
+  padding: 1.5rem;           /* some breathing room */
+}
+
+.navbar a {
+  color: inherit;          /* stay white */
+  margin: 0 1.5rem;        /* space between links */
+  text-decoration: none;   /* no underline */
+}
+
+.navbar a:hover {
+  opacity: 0.8;            /* subtle hover effect */
+}
+
+
+/* style the right‐side user info */
+.navbar-right {
+  font-weight: 500;
+}

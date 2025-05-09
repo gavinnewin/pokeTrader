@@ -1,0 +1,23 @@
+/* in App.css (or Sidebar.css) */
+.sidebar {
+  box-sizing: border-box;   
+  height: 100vh;
+  width: 4rem;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 2rem 0;
+  gap: 2rem;
+}
+
+
+
+.sidebar-icon {
+  color: white;
+  cursor: pointer;
+}
+.sidebar-icon:hover {
+  color: #E13432;
+}
