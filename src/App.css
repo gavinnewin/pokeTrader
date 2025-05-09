@@ -24,6 +24,7 @@
 .main-content {
   flex: 1;
   padding: 1rem 1.5rem;
+  overflow-y: auto;
   width: 100%;
   max-width: 100%;
   display: block;

@@ -13,7 +13,7 @@ export const featuredCards = [
   {
     id: 1,
     name: "Umbreon",
-    image: "/pokeball.png",
+    image: "/umbreon.png",
     price: "$1000.00",
     subtitle: "Base Set 12"
   },
@@ -21,7 +21,7 @@ export const featuredCards = [
   {
     id: 2,
     name: "Magikarp",
-    image: "/pokeball.png",
+    image: "/magikarp.png",
     price: "$1000.00",
     subtitle: "Base Set 52"
   },
@@ -29,7 +29,7 @@ export const featuredCards = [
   {
     id: 3,
     name: "Giratina",
-    image: "/pokeball.png",
+    image: "/giratina.png",
     price: "$1000.00",
     subtitle: "Base Set 63"
   },
@@ -37,7 +37,7 @@ export const featuredCards = [
   {
     id: 4,
     name: "Lugia",
-    image: "/pokeball.png",
+    image: "/lugia.png",
     price: "$1000.00",
     subtitle: "Base Set 58"
   },
@@ -45,7 +45,7 @@ export const featuredCards = [
   {
     id: 5,
     name: "Gengar",
-    image: "/pokeball.png",
+    image: "/gengar.png",
     price: "$1000.00",
     subtitle: "Base Set 69"
   },
@@ -53,7 +53,7 @@ export const featuredCards = [
   {
     id: 6,
     name: "Greninja ex",
-    image: "/pokeball.png",
+    image: "/greninja.png",
     price: "$1000.00",
     subtitle: "Base Set 32"
   }
@@ -65,9 +65,49 @@ export const watchlistCards = [
   {
     id: 7,
     name: "Felt Hat Pikachu",
-    image: "/pokeball.png",
+    image: "/pikachu.png",
     price: "$1000.00",
     subtitle: "Base Set 12"
+  },
+
+  {
+    id: 8,
+    name: "Machop",
+    image: "/mew.png",
+    price: "$1000.00",
+    subtitle: "Base Set 52"
+  },
+
+  {
+    id: 9,
+    name: "Squirtle",
+    image: "/charizard.png",
+    price: "$1000.00",
+    subtitle: "Base Set 63"
+  },
+
+  {
+    id: 10,
+    name: "Pikachu",
+    image: "/reshiram.png",
+    price: "$1000.00",
+    subtitle: "Base Set 58"
+  },
+
+  {
+    id: 11,
+    name: "Weedle",
+    image: "/weedle.png",
+    price: "$1000.00",
+    subtitle: "Base Set 69"
+  },
+
+  {
+    id: 12,
+    name: "Kadabara",
+    image: "/rayquaza.png",
+    price: "$1000.00",
+    subtitle: "Base Set 32"
   }
 
 ];

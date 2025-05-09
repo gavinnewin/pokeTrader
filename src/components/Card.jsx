@@ -1,10 +1,10 @@
 export default function Card({ image, name, price, subtitle }) {
   return (
-    <div className="bg-[#0f172a] p-2 rounded-xl shadow-md text-white text-sm">
+    <div className="bg-[#0f172a] p-2 rounded-lg shadow text-white text-xs w-[160px]">
       <img 
         src={image} 
         alt={name} 
-        className="rounded-md w-full h-40 object-cover mb-2" 
+        className="rounded-md w-full aspect-[3/4] object-contain mb-1" 
       />
       <div>
         <p className="font-semibold">{name}</p>
