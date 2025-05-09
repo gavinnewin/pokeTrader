@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <NavLink to="/" end className="nav-link">Home</NavLink>
+        <NavLink to="/home" className="nav-link">Home</NavLink>
         <NavLink to="/search" className="nav-link">Search</NavLink>
         <NavLink to="/marketplace" className="nav-link">Marketplace</NavLink>
       </div>
@@ -28,7 +28,7 @@ export default function Navbar() {
 
         {/* 2) Profile avatar */}
         <img 
-          src="/avatar.jpg" 
+          src="/avatar.png" 
           alt="Profile" 
           className="profile-pic" 
         />
