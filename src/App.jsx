@@ -7,7 +7,9 @@ import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
-import Logout   from "./pages/Logout";
+import Logout from "./pages/Logout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 import "./App.css";
 
