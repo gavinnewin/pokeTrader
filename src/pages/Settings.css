@@ -1,0 +1,53 @@
+.settings-page {
+  padding: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.settings-card {
+  background-color: #3a3a3a;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.setting-item img {
+  width: 24px;
+  height: 24px;
+}
+
+.settings-btn {
+  background-color: #888;
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-btn:hover {
+  background-color: #aaa;
+}
