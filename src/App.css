@@ -22,6 +22,9 @@
 
 /* The scrolling area for your cards */
 .main-content {
-  flex: 1;                    /* ← fill rest of column */
+  flex: 1;
   padding: 1rem 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  display: block;
 }
