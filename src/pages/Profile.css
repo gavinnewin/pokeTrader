@@ -1,7 +1,7 @@
 
 
 .profile-page {
-  padding: 2rem;
+  padding: -1rem;
   font-family: 'Segoe UI', sans-serif;
   color: white;
 }
@@ -10,9 +10,9 @@
 .profile-header {
   display: flex;
   justify-content: space-between;
-  gap: 3rem;
+  gap: 2rem;
   background-color: #272727;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 12px;
 }
 
@@ -101,8 +101,7 @@
 .profile-footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
   padding: 2rem;
   background: #1e1e1e;
   border-radius: 12px;
