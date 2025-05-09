@@ -8,7 +8,7 @@ export default function Logout() {
     // TODO: call your auth logout function here
     // auth.signOut().then(() => nav("/"));
     console.log("Logging out…");
-    nav("/");
+    nav("/login");
   }, [nav]);
 
   return <p>Logging you out…</p>;
