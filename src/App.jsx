@@ -10,6 +10,7 @@ import SettingsPage from "./pages/Settings";
 import Logout from "./pages/Logout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Marketplace from "./pages/Marketplace";
 
 import "./App.css";
 
@@ -34,10 +35,11 @@ const isLoginPage = location.pathname === "/login" || location.pathname === "/re
         <Navbar />
         <main className="main-content">
           <Routes>
-            <Route path="/"        element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/search"  element={<Search />} />
             <Route path="/profile"   element={<Profile />} />
             <Route path="/settings"  element={<SettingsPage />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/logout"    element={<Logout />} />
           </Routes>
         </main>
