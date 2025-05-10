@@ -52,19 +52,19 @@ export default function Profile() {
 
       <div className="profile-footer">
         <div className="stat">
-          <img src="/icons/wallet.svg" />
+          <img src="/Gallery.png" />
           <span>Collection Value: $7850.41</span>
         </div>
         <div className="stat">
-          <img src="/icons/ball.svg" />
+          <img src="/PokeMMO.png" />
           <span>14 Pokemons Owned</span>
         </div>
         <div className="action">
-          <img src="/icons/add.svg" />
+          <img src="/Collection.png" />
           <span>Add to Collection</span>
         </div>
         <div className="action">
-          <img src="/icons/delete.svg" />
+          <img src="/Delete.png" />
           <span>Delete from Collection</span>
         </div>
       </div>

@@ -98,24 +98,31 @@
 }
 
 /* Footer row */
+/* Footer row */
 .profile-footer {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;  /* push first and last to edges, space others evenly */
+  align-items: center;             /* vertical centering */
+  gap: 2rem;                       /* consistent gap between items */
   margin-top: 0.5rem;
   padding: 2rem;
   background: #1e1e1e;
   border-radius: 12px;
 }
 
-.stat, .action {
+/* Make each stat/action block flexibly sized */
+.profile-footer .stat,
+.profile-footer .action {
+  flex: 1 1 150px;    /* grow/shrink as needed, but at least 150px wide */
   display: flex;
   align-items: center;
   gap: 1rem;
-  font-size: 1.1rem;
 }
 
+
 .stat img, .action img {
-  width: 28px;
-  height: 28px;
+  width: 70px;
+  height: 40px;
   object-fit: contain;
 }

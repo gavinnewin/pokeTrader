@@ -4,9 +4,42 @@ export const featuredData = [
   /* … */
 ];
 
-export const trendingData = [
-  { id: 101, image: "/basic_giratina.png", name: "Giratina", price: "Near Mint • $1000" },
-  /* … */
+// export const trendingData = [
+//   { id: 101, image: "/basic_giratina.png", name: "Giratina", price: "Near Mint • $1000" },
+//   /* … */
+// ];
+
+export const trendingData = {
+  "1D": [ /* … */ ],
+  "3D": [ /* … */ ],
+  "7D": [ /* … */ ],
+  /* etc… */
+};
+
+export const topPerformers = [
+  { id: 1, name: "Pikachu",   image: "/poncho-pikachu.png"   },
+  { id: 2, name: "Magikarp",    image: "/magikarp.png"    },
+  { id: 3, name: "Charizard", image: "/gengar.png" }
+];
+
+export const portfolioData = [
+  {
+    id:      1,
+    name:    "Greninja",
+    image:   "greninja.png",
+    pnl:     65.70,
+    equity:  559.80,
+    sparkData: [ /* … */ ]
+  },
+  {
+    id:      2,
+    name:    "Giratina",
+    image:   "/giratina.png",
+    pnl:     22.40,
+    equity:  334.12,
+    sparkData: [ /* … */ ]
+  },
+  // …more items
 ];
 
 export const featuredCards = [
