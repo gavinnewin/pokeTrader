@@ -36,6 +36,7 @@ const isLoginPage = location.pathname === "/login" || location.pathname === "/re
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Navigate to="/home" />}/>
+            <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
             <Route path="/search"  element={<Search />} />
             <Route path="/profile"   element={<Profile />} />
