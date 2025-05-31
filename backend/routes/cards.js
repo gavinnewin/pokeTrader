@@ -15,4 +15,18 @@ router.post('/', async (req, res) => {
   res.status(201).json(card);
 });
 
+// GET a single card by name (e.g., /api/cards/pikachu)
+router.get('/:name', async (req, res) => {
+  try {
+    const card = await Card.findOne({ name: req.params.name});
+    if (!card) {
+      return res.status(404).json({ message: 'Card not found' });
+    }
+    res.json(card);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 module.exports = router;
