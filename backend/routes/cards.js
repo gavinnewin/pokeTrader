@@ -8,17 +8,10 @@ router.get('/', async (req, res) => {
   res.json(cards);
 });
 
-// POST a new card
-router.post('/', async (req, res) => {
-  const card = new Card(req.body);
-  await card.save();
-  res.status(201).json(card);
-});
-
 // GET a single card by name (e.g., /api/cards/pikachu)
 router.get('/:name', async (req, res) => {
   try {
-    const nameQuery = new RegExp(`^${req.params.name}$`, 'i'); // case-insensitive exact match
+    const nameQuery = new RegExp(req.params.name, 'i'); // case-insensitive partial match
     const card = await Card.findOne({ name: nameQuery });
 
     if (!card) {
@@ -30,6 +23,14 @@ router.get('/:name', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// POST a new card
+router.post('/', async (req, res) => {
+  const card = new Card(req.body);
+  await card.save();
+  res.status(201).json(card);
+});
+
 
 
 
