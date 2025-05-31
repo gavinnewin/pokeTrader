@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 // GET a single card by name (e.g., /api/cards/pikachu)
 router.get('/:name', async (req, res) => {
   try {
-    const nameQuery = new RegExp(`^${req.params.name}$`, 'i'); // case-insensitive exact match
+    const nameQuery = new RegExp(`^${req.params.name}$`, 'i');
     const card = await Card.findOne({ name: nameQuery });
 
     if (!card) {
