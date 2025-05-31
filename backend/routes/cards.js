@@ -12,13 +12,13 @@ router.get('/', async (req, res) => {
 router.get('/:name', async (req, res) => {
   try {
     const nameQuery = new RegExp(req.params.name, 'i'); // case-insensitive partial match
-    const card = await Card.findOne({ name: nameQuery });
+    const cards = await Card.find({ name: nameQuery });
 
-    if (!card) {
-      return res.status(404).json({ message: 'Card not found' });
+    if (!cards.length) {
+      return res.status(404).json({ message: 'No matching cards found' });
     }
 
-    res.json(card);
+    res.json(cards);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
