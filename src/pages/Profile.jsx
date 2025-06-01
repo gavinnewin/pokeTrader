@@ -15,7 +15,7 @@
 
       const formData = new FormData();
       formData.append('profilePic', file);
-      formData.append('userId', localStorage.getItem('userId')); // 🔁 replace with actual auth user ID
+      formData.append('email', localStorage.getItem('email')); // 🔁 replace with actual auth user ID
 
       try {
         const res = await axios.post('http://localhost:5000/api/user/upload-profile', formData, {

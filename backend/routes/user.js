@@ -9,23 +9,44 @@ const upload = multer();
 
 router.post('/upload-profile', upload.single('profilePic'), async (req, res) => {
   try {
+    const userEmail = req.body.email;
+    if (!userEmail) return res.status(400).json({ error: 'Missing email' });
+
     const stream = cloudinary.uploader.upload_stream(
       { folder: 'profile_pics' },
       async (err, result) => {
-        if (err) return res.status(500).json({ error: 'Upload failed' });
+        if (err) {
+          console.error('Cloudinary error:', err);
+          return res.status(500).json({ error: 'Upload failed' });
+        }
 
-        await User.findOneAndUpdate(
-          { username: req.body.email }, // or email depending on your schema
-          { profilePic: result.secure_url }
-        );
+        try {
+          const updatedUser = await User.findOneAndUpdate(
+            { email: userEmail },                        // ✅ find by email
+            { profilePic: result.secure_url },
+            { new: true }
+          );
 
-        res.json({ message: 'Uploaded successfully', url: result.secure_url });
+          if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+          }
+
+          res.json({ message: 'Uploaded successfully', url: result.secure_url });
+        } catch (mongoErr) {
+          console.error('MongoDB update error:', mongoErr);
+          res.status(500).json({ error: 'Database update failed' });
+        }
       }
     );
+
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (err) {
+    console.error('Server error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+
+
 
 module.exports = router;

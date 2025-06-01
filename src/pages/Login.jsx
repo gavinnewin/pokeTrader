@@ -23,6 +23,7 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("fullName", res.data.fullName);
       localStorage.setItem('email', res.data.email); 
+      localStorage.setItem("profilePic", res.data.profilePic);
 
       navigate('/home');
     } catch (err) {
