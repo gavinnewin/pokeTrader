@@ -1,26 +1,63 @@
-import React from "react";
-import "./Profile.css"; // you'll create this
+import React, { useState, useRef } from "react";
+import "./Profile.css";
+import axios from "axios";
 
 export default function Profile() {
+  const [profilePic, setProfilePic] = useState(localStorage.getItem('profilePic') || '/avatar.png');
+  const fileInputRef = useRef();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profilePic', file);
+    formData.append('userId', localStorage.getItem('userId')); // 🔁 replace with actual auth user ID
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/user/upload-profile', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      const url = res.data.url;
+      localStorage.setItem('profilePic', url);
+      setProfilePic(url);
+    } catch (err) {
+      console.error('Upload failed', err);
+    }
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div className="profile-page">
       <div className="profile-header">
         <div className="profile-left">
-          <img src="/avatar.png" alt="Profile" className="profile-pic-large" />
+          <img src={profilePic} alt="Profile" className="profile-pic-large" />
+
           <h2>
             Bessie Cooper <span className="verified-badge">✔</span>
           </h2>
           <p className="subtitle">Software Engineer</p>
 
-          <a href="#" className="change-pic">change profile picture</a>
+          <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+            style={{ display: 'none' }} 
+          />
 
           <div className="contact-info">
             <div>
-              <img src="/public/mail.png" alt="email" />
+              <img src="/mail.png" alt="email" />
               BessieC@gmail.com
             </div>
             <div>
-              <img src="/public/phone.png" alt="phone" />
+              <img src="/phone.png" alt="phone" />
               648-991-2764
             </div>
           </div>
@@ -29,7 +66,7 @@ export default function Profile() {
         <div className="profile-right">
           <h2>Activity</h2>
           <div className="card-activity">
-            <img src="/public/pokeball.png" alt="card" />
+            <img src="/pokeball.png" alt="card" />
             <div>
               <strong>Pikachu with Grey Felt Hat</strong>
               <p>Near Mint • Holofoil</p>
@@ -37,9 +74,8 @@ export default function Profile() {
               <p>Qty: 1</p>
             </div>
           </div>
-
           <div className="card-activity">
-            <img src="/public/pokeball.png" alt="card" />
+            <img src="/pokeball.png" alt="card" />
             <div>
               <strong>Pikachu with Grey Felt Hat</strong>
               <p>Near Mint • Holofoil</p>

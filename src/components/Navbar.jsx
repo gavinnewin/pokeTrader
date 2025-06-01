@@ -5,14 +5,21 @@ import { Sun, Moon } from "lucide-react";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const [dark, setDark] = useState(
-    () => localStorage.theme === "dark"
-  );
+  const [dark, setDark] = useState(() => localStorage.theme === "dark");
+  const [profilePic, setProfilePic] = useState("/avatar.png");
+  const [fullName, setFullName] = useState("Guest");
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.theme = dark ? "dark" : "light";
   }, [dark]);
+
+  useEffect(() => {
+    const pic = localStorage.getItem("profilePic");
+    const name = localStorage.getItem("fullName");
+    if (pic) setProfilePic(pic);
+    if (name) setFullName(name);
+  }, []);
 
   return (
     <nav className="navbar">
@@ -22,29 +29,23 @@ export default function Navbar() {
         <NavLink to="/marketplace" className="nav-link">Marketplace</NavLink>
       </div>
 
-<div className="navbar-right">
-  {/* User name */}
-  <span className="username">
-    {localStorage.getItem('fullName') || 'Guest'}
-  </span>
+      <div className="navbar-right">
+        <span className="username">{fullName}</span>
 
-  {/* Profile avatar */}
-  <img 
-    src="/avatar.png" 
-    alt="Profile" 
-    className="profile-pic" 
-  />
+        <img
+          src={profilePic}
+          alt="Profile"
+          className="profile-pic"
+        />
 
-  {/* Dark/light mode toggle */}
-  <button 
-    className="mode-toggle" 
-    onClick={() => setDark(d => !d)}
-    aria-label="Toggle dark mode"
-  >
-    {dark ? <Sun size={20}/> : <Moon size={20}/>}
-  </button>
-</div>
-
+        <button
+          className="mode-toggle"
+          onClick={() => setDark(d => !d)}
+          aria-label="Toggle dark mode"
+        >
+          {dark ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
     </nav>
   );
 }
