@@ -22,26 +22,29 @@ export default function Navbar() {
         <NavLink to="/marketplace" className="nav-link">Marketplace</NavLink>
       </div>
 
-      <div className="navbar-right">
-        {/* 1) User name */}
-        <span className="username">Bessie Cooper</span>
+<div className="navbar-right">
+  {/* User name */}
+  <span className="username">
+    {localStorage.getItem('fullName') || 'Guest'}
+  </span>
 
-        {/* 2) Profile avatar */}
-        <img 
-          src="/avatar.png" 
-          alt="Profile" 
-          className="profile-pic" 
-        />
+  {/* Profile avatar */}
+  <img 
+    src="/avatar.png" 
+    alt="Profile" 
+    className="profile-pic" 
+  />
 
-        {/* 3) Dark/light mode toggle */}
-        <button 
-          className="mode-toggle" 
-          onClick={() => setDark(d => !d)}
-          aria-label="Toggle dark mode"
-        >
-          {dark ? <Sun size={20}/> : <Moon size={20}/>}
-        </button>
-      </div>
+  {/* Dark/light mode toggle */}
+  <button 
+    className="mode-toggle" 
+    onClick={() => setDark(d => !d)}
+    aria-label="Toggle dark mode"
+  >
+    {dark ? <Sun size={20}/> : <Moon size={20}/>}
+  </button>
+</div>
+
     </nav>
   );
 }
