@@ -6,6 +6,14 @@
   color: white;
 }
 
+
+.profile-name {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
 /* Top section layout */
 .profile-header {
   display: flex;
@@ -29,6 +37,7 @@
   height: 20px;
   object-fit: contain;
 }
+
 
 
 .profile-pic-large {
