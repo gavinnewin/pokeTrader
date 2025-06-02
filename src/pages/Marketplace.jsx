@@ -6,11 +6,12 @@ export default function Marketplace() {
   const [query, setQuery] = useState("");
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCards = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/cards");
+        const res = await fetch(`${API}/api/cards`);
         const data = await res.json();
         setCards(data);
       } catch (err) {
