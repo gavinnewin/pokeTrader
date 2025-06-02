@@ -9,6 +9,60 @@
     const fullName = localStorage.getItem('fullName') || 'Guest';
     const email = localStorage.getItem('email') || 'noemail@example.com';
 
+    const [cards, setCards] = useState([]);
+    const [selectedCard, setSelectedCard] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [collectionCount, setCollectionCount] = useState(0);
+    const [collectionValue, setCollectionValue] = useState(0);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [ownedCards, setOwnedCards] = useState([]);
+    const [activityLog, setActivityLog] = useState([]);
+
+    React.useEffect(() => {
+  axios.get(`http://localhost:5000/api/user/activity?email=${email}`)
+    .then(res => setActivityLog(res.data))
+    .catch(err => console.error('Activity fetch failed', err));
+}, []);
+
+
+    React.useEffect(() => {
+      axios.get(`http://localhost:5000/api/user/owned-cards?email=${email}`)
+        .then(res => setOwnedCards(res.data))
+        .catch(err => console.error('Owned cards fetch failed', err));
+    }, []);
+
+    React.useEffect(() => {
+      axios.get(`http://localhost:5000/api/user/collection-count?email=${email}`)
+        .then(res => setCollectionCount(res.data.count))
+        .catch(err => console.error('Count fetch failed', err));
+    }, []);
+
+    React.useEffect(() => {
+      axios.get('http://localhost:5000/api/cards')
+        .then(res => setCards(res.data))
+        .catch(err => console.error('Card fetch failed', err));
+    }, []);
+
+    React.useEffect(() => {
+      axios.get(`http://localhost:5000/api/user/collection-value?email=${email}`)
+      .then(res => setCollectionValue(res.data.total))
+      .catch(err => console.error('Value fetch failed', err));
+    }, []);
+
+    const handleAddCard = () => {
+      if (!selectedCard) return alert("Pick a card first");
+
+      axios.post('http://localhost:5000/api/user/add-to-collection', {
+        email: localStorage.getItem('email'),
+        cardId: selectedCard
+      }).then(() => {
+        alert("Card added!");
+      }).catch(err => {
+        console.error('Add failed', err);
+        alert("Failed to add card.");
+      });
+    };
+
     const handleFileChange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -29,6 +83,21 @@
         console.error('Upload failed', err);
       }
     };
+
+    const handleRemoveCard = () => {
+      if (!selectedCard) return alert("Pick a card to remove");
+
+      axios.post('http://localhost:5000/api/user/remove-from-collection', {
+        email,
+        cardId: selectedCard
+      }).then(() => {
+        alert("Card removed!");
+      }).catch(err => {
+        console.error('Remove failed', err);
+        alert("Failed to remove card.");
+      });
+    };
+
 
     const triggerFileSelect = () => {
       fileInputRef.current.click();
@@ -61,47 +130,74 @@
                 </div>
             </div>
           </div>
-
-          <div className="profile-right">
-            <h2>Activity</h2>
-            <div className="card-activity">
+        <div className="profile-right">
+          <h2>Activity</h2>
+          {activityLog.map((entry, index) => (
+            <div className="card-activity" key={index}>
               <img src="/pokeball.png" alt="card" />
               <div>
-                <strong>Pikachu with Grey Felt Hat</strong>
-                <p>Near Mint • Holofoil</p>
-                <p className="price-up">+$20.25 (+5.25%)</p>
-                <p>Qty: 1</p>
+                <strong>{entry.message}</strong>
+                <p>{new Date(entry.timestamp).toLocaleString()}</p>
               </div>
             </div>
-            <div className="card-activity">
-              <img src="/pokeball.png" alt="card" />
-              <div>
-                <strong>Pikachu with Grey Felt Hat</strong>
-                <p>Near Mint • Holofoil</p>
-                <p className="price-down">- $10.25 (-2.25%)</p>
-                <p>Qty: 1</p>
-              </div>
-            </div>
-          </div>
+          ))}
+        </div>
         </div>
 
         <div className="profile-footer">
+
           <div className="stat">
             <img src="/Gallery.png" />
-            <span>Collection Value: $7850.41</span>
+            <span>Collection Value: ${collectionValue.toFixed(2)}</span>
           </div>
           <div className="stat">
             <img src="/PokeMMO.png" />
-            <span>14 Pokemons Owned</span>
+            <span>{collectionCount} Pokemons Owned</span>
           </div>
-          <div className="action">
-            <img src="/Collection.png" />
-            <span>Add to Collection</span>
+            <button className="add-btn" onClick={() => setShowModal(true)}>
+              <img src="/Collection.png" />
+              Add to Collection
+            </button>
+
+          {showModal && (
+            <div className="modal-backdrop">
+              <div className="modal">
+                <h3>Select a Card</h3>
+                <select onChange={(e) => setSelectedCard(e.target.value)}>
+                  <option value="">Choose one</option>
+                  {cards.map(card => (
+                    <option key={card._id} value={card._id}>{card.name}</option>
+                  ))}
+                </select>
+                <button onClick={handleAddCard}>Add</button>
+                <button className="close-btn" onClick={() => setShowModal(false)}>Close</button>
+              </div>
+            </div>
+          )}
+
+        <button className="delete-btn" onClick={() => setShowDeleteModal(true)}>
+          <img src="/Delete.png" />
+          Delete from Collection
+        </button>
+        {showDeleteModal && (
+          <div className="modal-backdrop">
+            <div className="modal">
+              <h3>Select a Card to Remove</h3>
+              <select onChange={(e) => setSelectedCard(e.target.value)}>
+                <option value="">Choose one</option>
+                {ownedCards.map(card => (
+                  <option key={card._id} value={card._id}>{card.name}</option>
+                ))}
+              </select>
+              <button onClick={() => {
+                handleRemoveCard();
+                setShowDeleteModal(false);
+              }}>Delete</button>
+              <button className="close-btn" onClick={() => setShowDeleteModal(false)}>Close</button>
+            </div>
           </div>
-          <div className="action">
-            <img src="/Delete.png" />
-            <span>Delete from Collection</span>
-          </div>
+        )}
+
         </div>
       </div>
     );

@@ -110,28 +110,61 @@
 /* Footer row */
 .profile-footer {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;  /* push first and last to edges, space others evenly */
-  align-items: center;             /* vertical centering */
-  gap: 2rem;                       /* consistent gap between items */
-  margin-top: 0.5rem;
-  padding: 2rem;
-  background: #1e1e1e;
-  border-radius: 12px;
-}
-
-/* Make each stat/action block flexibly sized */
-.profile-footer .stat,
-.profile-footer .action {
-  flex: 1 1 150px;    /* grow/shrink as needed, but at least 150px wide */
-  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap; /* optional: wrap items on smaller screens */
+  gap: 20px;
+  padding: 20px;
   align-items: center;
-  gap: 1rem;
 }
-
 
 .stat img, .action img {
   width: 70px;
   height: 40px;
   object-fit: contain;
+}
+
+.stat,
+.action,
+.add-btn {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+
+.modal-backdrop {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+}
+.modal {
+  background: rgb(0, 0, 0); padding: 20px; border-radius: 10px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.modal h3 {
+  background: black;
+  margin-top: 0;
+}
+
+select {
+  background-color: #222; /* dark background */
+  color: #fff;            /* white text */
+  border: 1px solid #555;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+select option {
+  background-color: #222;
+  color: #fff;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
 }
