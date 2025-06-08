@@ -23,9 +23,10 @@ export default function Home() {
         const res = await axios.get(`${API}/api/user/portfolio-history`, {
           params: { email, range: selectedRange }
         });
-        setPortfolioHistory(res.data);
+        setPortfolioHistory(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error('Failed to fetch portfolio history:', err);
+        setPortfolioHistory([]);
       }
     };
 
@@ -49,10 +50,10 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [email]);
 
-  const chartData = portfolioHistory.map(entry => ({
+  const chartData = Array.isArray(portfolioHistory) ? portfolioHistory.map(entry => ({
     time: new Date(entry.timestamp).toLocaleDateString(),
     value: entry.value
-  }));
+  })) : [];
 
   return (
     <div className="home">

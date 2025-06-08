@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Searchbar from "../components/Searchbar";
 import Section from "../components/Section";
 import axios from "axios";
+import Modal from "../components/Modal";
+import Card from "../components/Card";
 
 const POKEMON_TCG_API_KEY = "21740860-d49b-4c68-93ac-242a8461ff98";
 const POKEMON_TCG_API_URL = "https://api.pokemontcg.io/v2";
@@ -12,6 +14,8 @@ export default function Search() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
     const searchCards = async () => {
@@ -41,9 +45,10 @@ export default function Search() {
           price: card.cardmarket?.prices?.averageSellPrice 
             ? `$${card.cardmarket.prices.averageSellPrice.toFixed(2)}`
             : 'Price not available',
-          subtitle: card.cardmarket?.prices?.trendPrice 
-            ? `Trend: $${card.cardmarket.prices.trendPrice.toFixed(2)}`
-            : null
+          setName: card.set?.name || 'Unknown Set',
+          rarity: card.rarity || 'Unknown Rarity',
+          number: card.number || '',
+          printedTotal: card.set?.printedTotal || '',
         }));
 
         setCards(formattedCards);
@@ -59,6 +64,20 @@ export default function Search() {
     const timeoutId = setTimeout(searchCards, 500);
     return () => clearTimeout(timeoutId);
   }, [query]);
+
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+    setModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+    setSelectedCard(null);
+  };
+
+  // Inject onClick into each card
+  const injectOnClick = (items) =>
+    items.map((card) => ({ ...card, onClick: () => handleCardClick(card) }));
 
   return (
     <div className="search-page p-4 text-white">
@@ -77,10 +96,15 @@ export default function Search() {
         ) : (
           <Section
             title={query ? `Results for "${query}"` : "Search for Pokemon cards"}
-            items={cards}
+            items={injectOnClick(cards)}
             cardSize="w-40"
           />
         )}
+        <Modal isOpen={modalOpen} onClose={handleClose}>
+          {selectedCard && (
+            <Card {...selectedCard} className="w-64 mx-auto" showSetAndRarity={true} />
+          )}
+        </Modal>
       </div>
     </div>
   );
