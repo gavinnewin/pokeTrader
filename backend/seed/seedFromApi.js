@@ -6,7 +6,7 @@ const Card = require('./models/Card');
 const API_KEY = process.env.POKEMON_API_KEY;
 
 const fetchCards = async () => {
-  const res = await axios.get('https://api.pokemontcg.io/v2/cards?pageSize=50', {
+  const res = await axios.get('https://api.pokemontcg.io/v2/cards?pageSize=500', {
     headers: { 'X-Api-Key': API_KEY }
   });
 
@@ -35,7 +35,7 @@ const seed = async () => {
     const cards = await fetchCards();
     await Card.deleteMany();
     await Card.insertMany(cards);
-    console.log('✅ Seeded 50 cards with extended info');
+    console.log(`✅ Seeded ${cards.length} cards with extended info`);
     process.exit();
   } catch (err) {
     console.error('❌ Error seeding:', err);
