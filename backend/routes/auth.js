@@ -1,43 +1,120 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-
 const router = express.Router();
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 
-// Register
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "435567560693-pnmqmb8t5to8mcpmk4udbkjnul0pdviv.apps.googleusercontent.com");
+
+// Register new user
 router.post('/register', async (req, res) => {
-  const { fullName, email, password } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ fullName, email, password: hashedPassword });
+    const { fullName, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    // Create new user
+    const user = new User({
+      fullName,
+      email,
+      password
+    });
+
     await user.save();
-    res.status(201).json({ message: "User registered" });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(201).json({ message: 'Registration successful' });
+  } catch (error) {
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 
-// Login
+// Login user
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+
+    // Find user
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ error: "Invalid credentials" });
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-    const token = jwt.sign({ id: user._id }, "secret_key");
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      'your-secret-key', // In production, use environment variable
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// Google login
+router.post('/google-login', async (req, res) => {
+  try {
+    const { credential } = req.body;
+    
+    // Verify Google token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID || "435567560693-pnmqmb8t5to8mcpmk4udbkjnul0pdviv.apps.googleusercontent.com"
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if doesn't exist
+      user = new User({
+        email,
+        fullName: name,
+        password: Math.random().toString(36).slice(-8), // Random password for Google users
+        profilePic: picture
+      });
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      'your-secret-key', // In production, use environment variable
+      { expiresIn: '24h' }
+    );
+
     res.json({
       token,
       fullName: user.fullName,
       email: user.email,
-      profilePic: user.profilePic  // ✅ include this
+      profilePic: user.profilePic
     });
-  } catch (err) {
-    res.status(500).json({ error: "Login failed" });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ error: 'Google login failed' });
   }
 });
 
-module.exports = router;
+module.exports = router; 

@@ -3,6 +3,7 @@ import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import AuthLeftPanel from "../components/AuthLeftPanel";
 import axios from 'axios';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -29,6 +30,27 @@ export default function Register() {
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+        credential: credentialResponse.credential
+      });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("fullName", res.data.fullName);
+      localStorage.setItem('email', res.data.email); 
+      localStorage.setItem("profilePic", res.data.profilePic);
+
+      navigate('/home');
+    } catch (err) {
+      setError(err.response?.data?.error || "Google sign up failed");
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign up failed");
   };
 
   return (
@@ -71,6 +93,20 @@ export default function Register() {
           <p className="signup-text">
             Already have an account? <a href="/login">Login</a>
           </p>
+
+          <div className="or-divider"><span>or</span></div>
+
+          <div className="google-login-wrapper">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="signup_with"
+              shape="rectangular"
+              theme="outline"
+              size="large"
+              width="100%"
+            />
+          </div>
         </div>
       </div>
     </div>
