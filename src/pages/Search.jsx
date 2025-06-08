@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import Searchbar from "../components/Searchbar";
 import Section from "../components/Section";
 
-const API = import.meta.env.VITE_API_URL;
-
 export default function Search() {
   const [query, setQuery] = useState("");
   const [cards, setCards] = useState([]);
@@ -13,7 +11,7 @@ export default function Search() {
   useEffect(() => {
     const fetchCards = async () => {
       try {
-        const res = await fetch(`${API}/api/cards`);
+        const res = await fetch("http://localhost:5000/api/cards");
         const data = await res.json();
         setCards(data);
       } catch (err) {
