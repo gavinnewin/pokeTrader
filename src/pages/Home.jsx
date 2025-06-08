@@ -1,14 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css";
+import axios from "axios";
 
 import LineChart from "../components/LineChart";
 import MiniSparkline from "../components/MiniSparkline";
 import Card from "../components/Card";
-import { trendingData, topPerformers, portfolioData } from "../data";
+import Modal from "../components/Modal";
+import { topPerformers, portfolioData } from "../data";
+
+const API = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const ranges = ["1D","3D","7D","30D","3M","6M","1Y","All"];
   const [selectedRange, setSelectedRange] = useState("7D");
+  const [selectedPerformer, setSelectedPerformer] = useState(null);
+  const [portfolioHistory, setPortfolioHistory] = useState([]);
+  const email = localStorage.getItem('email') || 'noemail@example.com';
+
+  useEffect(() => {
+    const fetchPortfolioHistory = async () => {
+      try {
+        const res = await axios.get(`${API}/api/user/portfolio-history`, {
+          params: { email, range: selectedRange }
+        });
+        setPortfolioHistory(res.data);
+      } catch (err) {
+        console.error('Failed to fetch portfolio history:', err);
+      }
+    };
+
+    fetchPortfolioHistory();
+  }, [selectedRange, email]);
+
+  // Update portfolio value periodically
+  useEffect(() => {
+    const updatePortfolioValue = async () => {
+      try {
+        await axios.post(`${API}/api/user/update-portfolio-value`, { email });
+      } catch (err) {
+        console.error('Failed to update portfolio value:', err);
+      }
+    };
+
+    // Update every hour
+    const interval = setInterval(updatePortfolioValue, 60 * 60 * 1000);
+    updatePortfolioValue(); // Initial update
+
+    return () => clearInterval(interval);
+  }, [email]);
+
+  const chartData = portfolioHistory.map(entry => ({
+    time: new Date(entry.timestamp).toLocaleDateString(),
+    value: entry.value
+  }));
 
   return (
     <div className="home">
@@ -16,7 +60,7 @@ export default function Home() {
       <div className="collection-top">
         <Card className="collection-card">
           <h2 className="section-title">Collection Value</h2>
-          <LineChart data={trendingData[selectedRange]} />
+          <LineChart data={chartData} />
           <div className="range-buttons">
             {ranges.map(r => (
               <button
@@ -36,7 +80,12 @@ export default function Home() {
           <h2 className="section-title">Top 3 Performers</h2>
           <div className="performers-list">
             {topPerformers.map(p => (
-              <div key={p.id} className="performer-card">
+              <div 
+                key={p.id} 
+                className="performer-card"
+                onClick={() => setSelectedPerformer(p)}
+                style={{ cursor: 'pointer' }}
+              >
                 <img src={p.image} alt={p.name} />
               </div>
             ))}
@@ -72,6 +121,28 @@ export default function Home() {
       <footer className="footer">
         ©2025 PokeTrader. All rights reserved.
       </footer>
+
+      {/* Modal for Top Performer Details */}
+      <Modal 
+        isOpen={!!selectedPerformer} 
+        onClose={() => setSelectedPerformer(null)}
+      >
+        {selectedPerformer && (
+          <div className="performer-details">
+            <img 
+              src={selectedPerformer.image} 
+              alt={selectedPerformer.name} 
+              className="performer-image-large"
+            />
+            <h2>{selectedPerformer.name}</h2>
+            <div className="performer-stats">
+              <p>Current Value: $1,234.56</p>
+              <p>24h Change: +5.67%</p>
+              <p>7d Change: +12.34%</p>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

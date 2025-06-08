@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-import AuthLeftPanel from "../components/AuthLeftPanel";
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
+import AuthLeftPanel from "../components/AuthLeftPanel";
 
 const logo = "/pokeball.png";
 
-export default function Login() {
-  const navigate = useNavigate();
-
-  const [email, setEmail]       = useState('');
+const Login = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -55,7 +54,6 @@ export default function Login() {
   return (
     <div className="login-page">
       <AuthLeftPanel />
-
       <div className="login-right">
         <div className="login-right-content">
           <h2>Welcome Back!</h2>
@@ -86,8 +84,6 @@ export default function Login() {
           </p>
 
           <div className="or-divider"><span>or</span></div>
-
-          <button className="facebook-btn">Login with Facebook</button>
           
           <div className="google-login-wrapper">
             <GoogleLogin
@@ -104,4 +100,6 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

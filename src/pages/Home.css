@@ -87,6 +87,10 @@
   border-radius: 0.5rem; 
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   overflow: hidden;
+  transition: transform 0.2s;
+}
+.performer-card:hover {
+  transform: scale(1.05);
 }
 .performer-card img {
   width: 100%;
@@ -154,4 +158,39 @@
   font-size: 0.75rem;
   color: #6b7280;
   margin-top: 3rem;
+}
+
+/* Performer Details Modal */
+.performer-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  color: white;
+  text-align: center;
+}
+
+.performer-image-large {
+  width: 300px;
+  height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.performer-details h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.performer-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.performer-stats p {
+  margin: 0;
+  color: #9ca3af;
 }
