@@ -19,6 +19,18 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  profilePic: String,
+  watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
+  cardCollection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
+  activityLog: {
+    type: [
+      {
+        message: String,
+        timestamp: Date
+      }
+    ],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -26,7 +38,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   
   try {
@@ -39,5 +51,4 @@ userSchema.pre('save', async function(next) {
 });
 
 const User = mongoose.model('User', userSchema);
-
-module.exports = User; 
+module.exports = User;
