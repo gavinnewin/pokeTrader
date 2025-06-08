@@ -62,14 +62,14 @@ export default function Marketplace() {
             <Section
               title="Featured"
               items={cards.slice(0, 6)}
-              cardSize="w-40"
+              cardSize="w-52"
               showSetAndRarity={false}
             />
             {watchlist.length > 0 ? (
               <Section
                 title="From Your Watchlist"
                 items={watchlist}
-                cardSize="w-40"
+                cardSize="w-52"
                 showSetAndRarity={false}
               />
             ) : (
@@ -77,13 +77,13 @@ export default function Marketplace() {
                 <Section
                   title="Most Expensive Cards"
                   items={expensive}
-                  cardSize="w-40"
+                  cardSize="w-52"
                   showSetAndRarity={false}
                 />
                 <Section
                   title="Budget Picks"
                   items={cheap}
-                  cardSize="w-40"
+                  cardSize="w-52"
                   showSetAndRarity={false}
                 />
               </>

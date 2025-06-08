@@ -64,7 +64,7 @@ export default function Search() {
         <Section
           title={query ? `Results for "${query}"` : "Featured"}
           items={displayCards}
-          cardSize="w-40"
+          cardSize="w-52"
           showBuyLink={false}
         />
 

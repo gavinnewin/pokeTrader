@@ -11,7 +11,7 @@ export default function Section({
     <section className="mb-8">
       <div className="max-w-screen-xl mx-auto">
         <h2 className="mb-4 text-xl font-semibold">{title}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-6">
           {items.map(item => (
             <Card
               key={item._id || item.id}
