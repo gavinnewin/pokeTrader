@@ -66,6 +66,7 @@ export default function Search() {
           items={displayCards}
           cardSize="w-52"
           showBuyLink={false}
+          showSetAndRarity={true}
         />
 
         {modalOpen && (
@@ -73,7 +74,7 @@ export default function Search() {
             <Card
               {...selectedCard}
               className="w-64 mx-auto"
-              showSetAndRarity
+              showSetAndRarity={true}
               showBuyLink={false}
             />
           </Modal>

@@ -81,7 +81,7 @@ export default function Marketplace() {
                   showSetAndRarity={false}
                 />
                 <Section
-                  title="Budget Picks"
+                  title="Least Expensive Cards"
                   items={cheap}
                   cardSize="w-52"
                   showSetAndRarity={false}

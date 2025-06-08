@@ -47,17 +47,6 @@ export default function Card({
           <div>
             <p className="font-semibold text-sm mb-1">{name}</p>
 
-            {!showSetAndRarity && setName && (
-              <p className="text-xs text-gray-400">{setName}</p>
-            )}
-
-            {!showSetAndRarity && rarity && (
-              <p className="text-xs text-gray-400 mb-1">
-                {number && printedTotal ? `${number}/${printedTotal} | ` : ""}
-                {rarity}
-              </p>
-            )}
-
             {subtitle && (
               <p className="text-xs text-gray-400">{subtitle}</p>
             )}
@@ -70,14 +59,20 @@ export default function Card({
               <p className="text-xs text-gray-400">Qty: {qty}</p>
             )}
 
-            {showSetAndRarity && setName && (
-              <p className="text-xs text-gray-400 mt-1">{setName}</p>
-            )}
-            {showSetAndRarity && rarity && (
-              <p className="text-xs text-gray-400 mt-1">Rarity: {rarity}</p>
-            )}
-            {showSetAndRarity && number && printedTotal && (
-              <p className="text-xs text-gray-400 mt-1">No: {number} / {printedTotal}</p>
+            {showSetAndRarity && (
+              <>
+                {setName && (
+                  <p className="text-xs text-gray-400 mt-1">{setName}</p>
+                )}
+                {rarity && (
+                  <p className="text-xs text-gray-400 mt-1">Rarity: {rarity}</p>
+                )}
+                {printedTotal && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    1 of {printedTotal}
+                  </p>
+                )}
+              </>
             )}
 
             {showBuyLink && tcgplayerUrl && (

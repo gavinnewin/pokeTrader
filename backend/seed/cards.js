@@ -1,79 +1,46 @@
-const cards = [
-  // featuredCards
-  {
-    name: "Umbreon",
-    image: "/umbreon.png",
-    price: 1000,
-    subtitle: "Base Set 12"
-  },
-  {
-    name: "Magikarp",
-    image: "/magikarp.png",
-    price: 1000,
-    subtitle: "Base Set 52"
-  },
-  {
-    name: "Giratina",
-    image: "/giratina.png",
-    price: 1000,
-    subtitle: "Base Set 63"
-  },
-  {
-    name: "Lugia",
-    image: "/lugia.png",
-    price: 1000,
-    subtitle: "Base Set 58"
-  },
-  {
-    name: "Gengar",
-    image: "/gengar.png",
-    price: 1000,
-    subtitle: "Base Set 69"
-  },
-  {
-    name: "Greninja ex",
-    image: "/greninja.png",
-    price: 1000,
-    subtitle: "Base Set 32"
-  },
+const mongoose = require('mongoose');
+const axios = require('axios');
+require('dotenv').config();
+const Card = require('./models/Card');
 
-  // watchlistCards
-  {
-    name: "Felt Hat Pikachu",
-    image: "/pikachu.png",
-    price: 1000,
-    subtitle: "Base Set 12"
-  },
-  {
-    name: "Machop",
-    image: "/mew.png",
-    price: 1000,
-    subtitle: "Base Set 52"
-  },
-  {
-    name: "Squirtle",
-    image: "/charizard.png",
-    price: 1000,
-    subtitle: "Base Set 63"
-  },
-  {
-    name: "Pikachu",
-    image: "/reshiram.png",
-    price: 1000,
-    subtitle: "Base Set 58"
-  },
-  {
-    name: "Weedle",
-    image: "/weedle.png",
-    price: 1000,
-    subtitle: "Base Set 69"
-  },
-  {
-    name: "Kadabara",
-    image: "/rayquaza.png",
-    price: 1000,
-    subtitle: "Base Set 32"
+const API_KEY = process.env.POKEMON_API_KEY;
+
+const fetchCards = async () => {
+  const res = await axios.get('https://api.pokemontcg.io/v2/cards?pageSize=50', {
+    headers: { 'X-Api-Key': API_KEY }
+  });
+
+  return res.data.data
+    .filter(card => card.tcgplayer?.url && card.tcgplayer?.prices?.holofoil?.market)
+    .map(card => {
+      // Get the full card number (e.g., "1/132" or "H1/132")
+      const fullNumber = card.number || '';
+      
+      return {
+        name: card.name,
+        image: card.images?.large || card.images?.small,
+        price: parseFloat(card.tcgplayer.prices.holofoil.market.toFixed(2)),
+        subtitle: card.set.name,
+        tcgplayerUrl: card.tcgplayer.url,
+        rarity: card.rarity || 'Unknown',
+        number: fullNumber,
+        printedTotal: card.set?.printedTotal || 0,
+      };
+    });
+};
+
+const seed = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    const cards = await fetchCards();
+    await Card.deleteMany();
+    await Card.insertMany(cards);
+    console.log('✅ Seeded 50 cards with extended info');
+    process.exit();
+  } catch (err) {
+    console.error('❌ Error seeding:', err);
+    process.exit(1);
   }
-];
+};
 
-module.exports = cards;
+seed();
