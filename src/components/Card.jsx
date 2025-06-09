@@ -19,9 +19,19 @@ export default function Card({
   noShadow = false,
   inSearch = false,
   transparent = false,
-  noHover = false
+  noHover = false,
+  onQtyChange
 }) {
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [localQty, setLocalQty] = useState(qty);
+
+  const handleQtyChange = (newQty) => {
+    if (newQty < 1) return;
+    setLocalQty(newQty);
+    if (onQtyChange) {
+      onQtyChange(newQty);
+    }
+  };
 
   return (
     <div
@@ -65,7 +75,7 @@ export default function Card({
             alt={name}
             className="rounded-md w-full aspect-[3/4] object-cover mb-6 max-h-[280px] transition-transform duration-200"
           />
-          <div className="flex-grow">
+          <div className={`flex-grow ${transparent ? 'bg-white dark:bg-[#242424] rounded-lg p-4 shadow-sm mb-4 -mx-12' : ''}`}>
             <p className="font-semibold text-base mb-1 text-gray-800 dark:text-white">{name}</p>
 
             {subtitle && (
@@ -75,26 +85,48 @@ export default function Card({
             {showSetAndRarity && (
               <>
                 {setName && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{setName}</p>
+                  <p className="text-xs font-normal text-gray-600 dark:text-gray-400 mt-1">{setName}</p>
                 )}
-                {rarity && number && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {rarity} ● {number} {printedTotal && `/ ${printedTotal}`}
+                {rarity && (
+                  <p className="text-xs font-normal text-gray-600 dark:text-gray-400 mt-1">
+                    {rarity} {number && `● ${number}`} {printedTotal && `/ ${printedTotal}`}
                   </p>
                 )}
               </>
             )}
           </div>
           
-          <div className="mt-auto pt-8">
-            <p className="text-base font-semibold text-gray-800 dark:text-white">
-              ${price?.toFixed?.(2) || "0.00"}
-            </p>
-            {!showBuyLink && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                Qty: {qty}
+          <div className={`mt-auto pt-8 ${transparent ? 'bg-white dark:bg-[#242424] rounded-lg p-4 shadow-sm -mx-12' : ''}`}>
+            <div className="flex items-center justify-between">
+              {transparent && !showBuyLink && (
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleQtyChange(localQty - 1);
+                    }}
+                    className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    -
+                  </button>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Qty: {localQty}
+                  </p>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleQtyChange(localQty + 1);
+                    }}
+                    className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              )}
+              <p className="text-base font-semibold text-gray-800 dark:text-white">
+                ${price?.toFixed?.(2) || "0.00"}
               </p>
-            )}
+            </div>
             {showBuyLink && tcgplayerUrl && (
               <a
                 href={tcgplayerUrl}
