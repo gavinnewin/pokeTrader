@@ -50,7 +50,7 @@ export default function Card({
         if (onClick && (e.key === 'Enter' || e.key === ' ')) onClick(e);
       }}
     >
-      {!showBuyLink && inSearch && (
+      {!showBuyLink && inSearch && !transparent && (
         <button 
           className="absolute bottom-8 right-8 w-10 h-10 rounded-full border-2 border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center text-red-500 shadow-sm transition-all duration-200 hover:scale-110 active:scale-95"
           onClick={(e) => {

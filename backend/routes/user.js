@@ -7,14 +7,17 @@ const PortfolioHistory = require('../models/PortfolioHistory');
 
 // Add to collection
 router.post('/add-to-collection', async (req, res) => {
-  const { email, cardId } = req.body;
+  const { email, cardId, quantity = 1 } = req.body;
 
   try {
     const user = await User.findOne({ email });
     const card = await Card.findById(cardId);
     if (!user || !card) return res.status(404).json({ error: 'User or card not found' });
 
-    user.cardCollection.push(cardId);
+       for (let i = 0; i < quantity; i++) {
+      user.cardCollection.push(cardId);
+    }
+
     user.activityLog ||= [];
     user.activityLog.unshift({ message: `Added ${card.name} to collection`, timestamp: new Date() });
     user.activityLog = user.activityLog.slice(0, 10);
@@ -22,6 +25,7 @@ router.post('/add-to-collection', async (req, res) => {
     await user.save();
     res.json({ message: 'Card added to collection' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Failed to add card' });
   }
 });

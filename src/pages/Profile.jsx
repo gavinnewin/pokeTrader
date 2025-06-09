@@ -21,6 +21,7 @@ const fetchPortfolioCards = async () => {
     const res = await axios.get(`${API}/api/user/owned-cards`, {
       params: { email }
     });
+    setPortfolioCards(res.data); // ✅ this is missing
   } catch (err) {
     console.error('Failed to fetch portfolio cards:', err);
     setError("Failed to load portfolio cards");

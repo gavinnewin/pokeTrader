@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Searchbar from "../components/Searchbar";
 import Section from "../components/Section";
+import axios from "axios";
 
 import Modal from "../components/Modal";
 import Card from "../components/Card";
@@ -12,6 +13,7 @@ export default function Search() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [addingCard, setAddingCard] = useState(null);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     priceRange: {
@@ -105,31 +107,27 @@ export default function Search() {
     onClick: () => handleCardClick(card)
   }));
 
-  const handleAddToPortfolio = async (card) => {
-    setAddingCard(card.id);
-    const email = localStorage.getItem('email') || 'noemail@example.com';
-    
-    try {
-      await axios.post(`${API}/api/user/add-card`, {
-        email,
-        card: {
-          id: card.id,
-          name: card.name,
-          image: card.image,
-          price: card.marketPrice,
-          quantity: 1
-        }
-      });
-      
-      // Show success message or update UI
-      alert(`${card.name} added to your portfolio!`);
-    } catch (err) {
-      console.error("Failed to add card to portfolio:", err);
-      alert("Failed to add card to portfolio. Please try again.");
-    } finally {
-      setAddingCard(null);
-    }
-  };
+const handleAddToPortfolio = async (card) => {
+  const quantity = card.qty || 1; // get the user-selected qty
+  setAddingCard(card.id);
+  const email = localStorage.getItem('email') || 'noemail@example.com';
+
+  try {
+    await axios.post(`${API}/api/user/add-to-collection`, {
+    email,
+    cardId: card._id,
+    quantity
+    });
+
+    alert(`${card.name} (x${quantity}) added to your portfolio!`);
+  } catch (err) {
+    console.error("Failed to add card to portfolio:", err);
+    alert("Failed to add card to portfolio. Please try again.");
+  } finally {
+    setAddingCard(null);
+  }
+};
+
 
   const renderCard = (card) => (
     <div className="relative group">
@@ -187,14 +185,32 @@ export default function Search() {
         />
 
         {modalOpen && (
-          <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-            <Card
-              {...selectedCard}
-              className="w-52 mx-auto"
-              showSetAndRarity={true}
-              showBuyLink={false}
-            />
-          </Modal>
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <div className="flex flex-col items-center gap-4">
+        <Card
+          {...selectedCard}
+          className="w-52 mx-auto"
+          showSetAndRarity={true}
+          showBuyLink={false}
+          qty={selectedCard?.qty || 1}
+          onQtyChange={(newQty) => {
+            setSelectedCard(prev => ({
+              ...prev,
+              qty: newQty
+            }));
+          }}
+          inSearch={true} // required to show plus/minus buttons
+          transparent={true} // ✅ this unlocks the Qty UI
+        />
+
+            <button
+              onClick={() => handleAddToPortfolio(selectedCard)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all"
+            >
+              Add to Portfolio
+            </button>
+          </div>
+        </Modal>
         )}
       </div>
     </div>
