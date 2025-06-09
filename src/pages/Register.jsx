@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import AuthLeftPanel from "../components/AuthLeftPanel";
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
+const API = import.meta.env.VITE_API_URL;
+
 
 export default function Register() {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await axios.post(`${API}/api/auth/register`, {
         fullName,
         email,
         password
@@ -34,7 +36,7 @@ export default function Register() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+      const res = await axios.post(`${API}/api/auth/google-login`, {
         credential: credentialResponse.credential
       });
 
