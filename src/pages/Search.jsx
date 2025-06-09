@@ -110,7 +110,7 @@ export default function Search() {
     const email = localStorage.getItem('email') || 'noemail@example.com';
     
     try {
-      await axios.post('/api/user/add-card', {
+      await axios.post(`${API}/api/user/add-card`, {
         email,
         card: {
           id: card.id,
@@ -144,8 +144,11 @@ export default function Search() {
         {card.subtitle && <p className="text-xs text-gray-300">{card.subtitle}</p>}
       </div>
       <button
-        onClick={() => handleAddToPortfolio(card)}
-        disabled={addingCard === card.id}
+      onClick={(e) => {
+        e.stopPropagation(); // <- stops the outer card click
+        handleCardClick(card); // opens modal
+      }}        
+      disabled={addingCard === card.id}
         className="absolute top-2 right-2 p-2 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-blue-700 disabled:opacity-50"
       >
         <Plus size={20} className="text-white" />
@@ -180,6 +183,7 @@ export default function Search() {
           cardSize="w-52"
           showBuyLink={false}
           showSetAndRarity={true}
+          renderCard={renderCard}
         />
 
         {modalOpen && (

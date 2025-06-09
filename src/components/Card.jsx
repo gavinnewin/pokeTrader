@@ -54,9 +54,9 @@ export default function Card({
         <button 
           className="absolute bottom-8 right-8 w-10 h-10 rounded-full border-2 border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center text-red-500 shadow-sm transition-all duration-200 hover:scale-110 active:scale-95"
           onClick={(e) => {
-            e.stopPropagation();
-            // Add your click handler here
-          }}
+          e.stopPropagation();
+          if (onClick) onClick(); // This opens the modal
+        }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />

@@ -11,49 +11,28 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCard, setSelectedCard] = useState('');
-  const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [collectionCount, setCollectionCount] = useState(0);
-  const [collectionValue, setCollectionValue] = useState(0);
+
   const email = localStorage.getItem('email') || 'noemail@example.com';
 
-  useEffect(() => {
-    const fetchPortfolioCards = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${API}/api/user/owned-cards`, {
-          params: { email }
-        });
-        setPortfolioCards(res.data);
-        setCollectionCount(res.data.length);
-        setCollectionValue(res.data.reduce((sum, card) => sum + (card.price || 0), 0));
-      } catch (err) {
-        console.error('Failed to fetch portfolio cards:', err);
-        setError("Failed to load portfolio cards");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPortfolioCards();
-  }, [email]);
-
-  const handleAddCard = () => {
-    if (!selectedCard) return alert("Pick a card first");
-
-    axios.post(`${API}/api/user/add-to-collection`, {
-      email: email,
-      cardId: selectedCard
-    }).then(() => {
-      alert("Card added!");
-      setShowModal(false);
-      // Refresh the portfolio cards
-      fetchPortfolioCards();
-    }).catch(err => {
-      console.error('Add failed', err);
-      alert("Failed to add card.");
+const fetchPortfolioCards = async () => {
+  try {
+    setLoading(true);
+    const res = await axios.get(`${API}/api/user/owned-cards`, {
+      params: { email }
     });
-  };
+  } catch (err) {
+    console.error('Failed to fetch portfolio cards:', err);
+    setError("Failed to load portfolio cards");
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchPortfolioCards();
+}, [email]);
+
 
   const handleRemoveCard = () => {
     if (!selectedCard) return alert("Pick a card first");
@@ -137,22 +116,6 @@ export default function Profile() {
           </div>
         )}
       </div>
-
-      {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h3>Select a Card</h3>
-            <select onChange={(e) => setSelectedCard(e.target.value)}>
-              <option value="">Choose one</option>
-              {portfolioCards.map(card => (
-                <option key={card._id} value={card._id}>{card.name}</option>
-              ))}
-            </select>
-            <button onClick={handleAddCard}>Add</button>
-            <button className="close-btn" onClick={() => setShowModal(false)}>Close</button>
-          </div>
-        </div>
-      )}
 
       {showDeleteModal && (
         <div className="modal-backdrop">
