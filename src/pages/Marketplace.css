@@ -1,0 +1,187 @@
+.marketplace-page {
+  @apply bg-gray-50 dark:bg-[#1a1a1a] text-gray-800 dark:text-white;
+  padding: 2rem;
+  padding-left: 7rem;
+}
+
+.marketplace-container {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.marketplace-container h1 {
+  @apply text-gray-800 dark:text-white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.marketplace-container p {
+  @apply text-gray-600 dark:text-gray-300;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  @apply border-red-500 ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-[#1a1a1a];
+  outline: none;
+}
+
+.marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card-item {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.card-item:hover {
+  transform: translateY(-4px);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-details {
+  padding: 1rem;
+}
+
+.card-name {
+  @apply text-gray-800 dark:text-white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-price {
+  @apply text-red-500;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.watchlist-button {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.watchlist-button:hover {
+  @apply bg-red-600;
+}
+
+.watchlist-button.in-watchlist {
+  @apply bg-gray-500 hover:bg-gray-600;
+}
+
+.loading, .error {
+  @apply text-gray-600 dark:text-gray-300;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.error {
+  @apply text-red-500;
+}
+
+.modal-overlay {
+  @apply bg-black/50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  @apply text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-details {
+  margin-top: 1rem;
+}
+
+.modal-details h2 {
+  @apply text-gray-800 dark:text-white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.modal-details p {
+  @apply text-gray-600 dark:text-gray-300;
+  margin-bottom: 0.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.modal-actions button:hover {
+  @apply bg-red-600;
+} 

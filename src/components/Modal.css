@@ -12,13 +12,28 @@
 }
 
 .modal-content {
-  background: #1a1a1a;
+  background: white;
   padding: 2rem;
   border-radius: 12px;
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #1a1a1a;
+  z-index: 1001;
+}
+
+.modal-content h2 {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.modal-content p {
+  color: #4a5568;
+  margin: 0.5rem 0;
 }
 
 .modal-close {
@@ -27,13 +42,33 @@
   right: 1rem;
   background: none;
   border: none;
-  color: #fff;
+  color: #1a1a1a;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
   line-height: 1;
+  z-index: 1002;
 }
 
 .modal-close:hover {
   color: #f87171;
+}
+
+/* Dark mode styles */
+:root[class~="dark"] .modal-content {
+  background: #1a1a1a;
+  color: white;
+  box-shadow: none;
+}
+
+:root[class~="dark"] .modal-content h2 {
+  color: white;
+}
+
+:root[class~="dark"] .modal-content p {
+  color: #e2e8f0;
+}
+
+:root[class~="dark"] .modal-close {
+  color: white;
 } 

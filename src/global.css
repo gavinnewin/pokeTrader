@@ -17,10 +17,29 @@ body,
 body {
   font-family: "Poppins", system-ui, sans-serif;
   font-weight: 600;
+  @apply bg-gray-50 dark:bg-[#1a1a1a] text-gray-800 dark:text-white;
 }
 
 img {
   object-fit: contain !important;
   object-position: center center !important;
+}
+
+/* Remove all focus styles */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}
+
+/* Remove focus styles for all elements */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+a:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
 }
 

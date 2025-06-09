@@ -4,9 +4,10 @@
 .home {
   padding: 1.5rem;
   min-height: 100vh;
-  color: #f3f4f6;
+  @apply bg-gray-50 dark:bg-[#1a1a1a] text-gray-800 dark:text-white;
   box-sizing: border-box;
 }
+
 /* space-y-8 */
 .home > * + * {
   margin-top: 2rem;
@@ -15,10 +16,11 @@
 /* Collection & Performers cards */
 .home .collection-card,
 .home .performers-card {
-  background: #242424;
-  color: #ffffff;
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
   padding: 1.5rem;
   box-sizing: border-box;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Make Collection Value card a column-flex so its footer stays at the bottom */
@@ -44,6 +46,7 @@
 
 /* Section headers */
 .section-title {
+  color: #1a1a1a;
   font-size: 1.25rem;    /* text-xl */
   font-weight: 600;      /* font-semibold */
   margin-bottom: 1rem;   /* mb-4 */
@@ -56,21 +59,26 @@
   gap: 0.5rem;           /* gap-2 */
   margin-top: 1rem;      /* mt-4 */
 }
+
 .range-btn {
   padding: 0.25rem 0.75rem;      /* py-1 px-3 */
   border-radius: 9999px;         /* rounded-full */
   font-size: 0.875rem;           /* text-sm */
   transition: all 0.2s;
-  border: 1px solid #4b5563;     /* border-gray-600 */
-  color: #9ca3af;                /* text-gray-400 */
-  background-color: transparent;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  background: white;
+  cursor: pointer;
 }
+
 .range-btn:hover {
-  border-color: #9ca3af;
+  border-color: #ef4444;
+  color: #ef4444;
 }
+
 .range-btn--selected {
-  background-color: #ef4444;     /* bg-red-500 */
-  color: #ffffff;                /* text-white */
+  background: #ef4444;
+  color: white;
   border-color: transparent;
 }
 
@@ -81,17 +89,20 @@
   gap: 1.5rem;
   overflow-x: visible;
 }
+
 .performer-card {
   flex: 0 1 12rem;       
   height: 17rem;         
   border-radius: 0.5rem; 
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  @apply bg-white dark:bg-[#242424] shadow-sm dark:shadow-md;
   overflow: hidden;
   transition: transform 0.2s;
 }
+
 .performer-card:hover {
   transform: scale(1.05);
 }
+
 .performer-card img {
   width: 100%;
   height: 100%;
@@ -109,13 +120,14 @@
 
 /* Individual portfolio item */
 .home .portfolio-item {
-  background: #242424;
-  color: #ffffff;
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
   padding: 1.5rem;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Portfolio item image */
@@ -130,20 +142,24 @@
 .portfolio-item .info {
   flex: 1;
 }
+
 .portfolio-item .name {
+  color: #1a1a1a;
   font-weight: 500;
 }
+
 .portfolio-item .equity {
+  @apply text-gray-600 dark:text-gray-400;
   font-size: 0.875rem;
-  color: #9ca3af;
 }
 
 /* P&L coloring */
 .pnl-positive {
-  color: #4ade80;
+  @apply text-green-500;
 }
+
 .pnl-negative {
-  color: #f87171;
+  @apply text-red-500;
 }
 
 /* Sparkline container */
@@ -156,7 +172,7 @@
 .footer {
   text-align: center;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #4a5568;
   margin-top: 3rem;
 }
 
@@ -166,7 +182,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  color: white;
+  @apply text-gray-800 dark:text-white;
   text-align: center;
 }
 
@@ -191,6 +207,118 @@
 }
 
 .performer-stats p {
-  margin: 0;
-  color: #9ca3af;
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+.home-page {
+  @apply bg-gray-50 dark:bg-[#1a1a1a] text-gray-800 dark:text-white;
+  padding: 2rem;
+  padding-left: 7rem;
+}
+
+.home-header {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.home-header h1 {
+  @apply text-gray-800 dark:text-white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.home-header p {
+  @apply text-gray-600 dark:text-gray-300;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.collection-card {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.collection-card h2 {
+  @apply text-gray-800 dark:text-white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.collection-card p {
+  @apply text-gray-600 dark:text-gray-300;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.performer-card {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.performer-card h2 {
+  @apply text-gray-800 dark:text-white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.performer-card p {
+  @apply text-gray-600 dark:text-gray-300;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.performer-card button {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.performer-card button:hover {
+  @apply bg-red-600;
+}
+
+/* Dark mode styles */
+:root[class~="dark"] .home {
+  @apply bg-[#1a1a1a] text-white;
+}
+
+:root[class~="dark"] .section-title {
+  color: white;
+}
+
+:root[class~="dark"] .portfolio-item .name {
+  color: white;
+}
+
+:root[class~="dark"] .footer {
+  color: #e2e8f0;
+}
+
+:root[class~="dark"] .range-btn {
+  border-color: #4b5563;
+  color: #e5e7eb;
+  background: #242424;
+}
+
+:root[class~="dark"] .range-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+:root[class~="dark"] .range-btn--selected {
+  background: #ef4444;
+  color: white;
+  border-color: transparent;
 }
