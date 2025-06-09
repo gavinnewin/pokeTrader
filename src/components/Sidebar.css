@@ -6,7 +6,7 @@
   left: 0;
   height: 100vh;
   width: 4.5rem;
-  background: #242424;
+  @apply bg-white dark:bg-[#242424] border-r border-gray-200 dark:border-gray-800;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -28,8 +28,6 @@
   height: auto;
 }
 
-
-
 .sidebar-icons {
   display: flex;
   flex-direction: column;
@@ -37,9 +35,6 @@
 }
 
 .sidebar-icon {
-  color: white;
+  @apply text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-500;
   cursor: pointer;
-}
-.sidebar-icon:hover {
-  color: #E13432;
 }

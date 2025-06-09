@@ -3,10 +3,13 @@ const router = express.Router();
 const multer = require('multer');
 const streamifier = require('streamifier');
 const cloudinary = require('../config/cloudinary');
-const User = require('../models/user'); // or 'User'
+const User = require('../models/user');
+const Card = require('../models/Card');
+const PortfolioHistory = require('../models/PortfolioHistory');
 
 const upload = multer();
 
+// Upload profile picture
 router.post('/upload-profile', upload.single('profilePic'), async (req, res) => {
   try {
     const userEmail = req.body.email;
@@ -15,134 +18,116 @@ router.post('/upload-profile', upload.single('profilePic'), async (req, res) => 
     const stream = cloudinary.uploader.upload_stream(
       { folder: 'profile_pics' },
       async (err, result) => {
-        if (err) {
-          console.error('Cloudinary error:', err);
-          return res.status(500).json({ error: 'Upload failed' });
-        }
+        if (err) return res.status(500).json({ error: 'Upload failed' });
 
-        try {
-          const updatedUser = await User.findOneAndUpdate(
-            { email: userEmail },                        // ✅ find by email
-            { profilePic: result.secure_url },
-            { new: true }
-          );
+        const updatedUser = await User.findOneAndUpdate(
+          { email: userEmail },
+          { profilePic: result.secure_url },
+          { new: true }
+        );
 
-          if (!updatedUser) {
-            return res.status(404).json({ error: 'User not found' });
-          }
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
 
-          res.json({ message: 'Uploaded successfully', url: result.secure_url });
-        } catch (mongoErr) {
-          console.error('MongoDB update error:', mongoErr);
-          res.status(500).json({ error: 'Database update failed' });
-        }
+        res.json({ message: 'Uploaded successfully', url: result.secure_url });
       }
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (err) {
-    console.error('Server error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-
+// Add to collection
 router.post('/add-to-collection', async (req, res) => {
+  const { email, cardId } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    const card = await Card.findById(cardId);
+    if (!user || !card) return res.status(404).json({ error: 'User or card not found' });
+
+    user.cardCollection.push(cardId);
+    user.activityLog ||= [];
+    user.activityLog.unshift({ message: `Added ${card.name} to collection`, timestamp: new Date() });
+    user.activityLog = user.activityLog.slice(0, 10);
+
+    await user.save();
+    res.json({ message: 'Card added to collection' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add card' });
+  }
+});
+
+// Remove from collection
+router.post('/remove-from-collection', async (req, res) => {
+  const { email, cardId } = req.body;
+
+  try {
+    const user = await User.findOne({ email }).populate('cardCollection');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const card = user.cardCollection.find(c => c._id.toString() === cardId);
+    const cardName = card ? card.name : 'Unknown card';
+
+    user.cardCollection.pull(cardId);
+    user.activityLog ||= [];
+    user.activityLog.unshift({ message: `Removed ${cardName} from collection`, timestamp: new Date() });
+    user.activityLog = user.activityLog.slice(0, 10);
+
+    await user.save();
+    res.json({ message: 'Card removed', updated: user });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add to watchlist
+router.post('/add-to-watchlist', async (req, res) => {
   const { email, cardId } = req.body;
 
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const card = await Card.findById(cardId);
-    if (!card) return res.status(404).json({ error: 'Card not found' });
-
-    user.cardCollection.push(cardId);
-    
-    if (!Array.isArray(user.activityLog)) {
-    user.activityLog = [];
+    if (!user.watchlist.includes(cardId)) {
+      user.watchlist.push(cardId);
+      await user.save();
     }
-    user.activityLog.unshift({
-      message: `Added ${card.name} to collection`,
-      timestamp: new Date()
-    });
 
-    user.activityLog = user.activityLog.slice(0, 10); // keep last 10
-    await user.save();
-
-    res.json({ message: 'Card added to collection' });
+    res.json({ message: 'Added to watchlist' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to add card' });
-  }
-});
-
-
-router.get('/collection-count', async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.query.email });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const count = user.cardCollection.length;
-    res.json({ count });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to count collection' });
-  }
-});
-
-
-const Card = require('../models/Card'); // make sure it's imported
-
-router.get('/collection-value', async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.query.email }).populate('cardCollection');
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
-    res.json({ total });
-  } catch (err) {
-    console.error('Failed to compute collection value:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.post('/remove-from-collection', async (req, res) => {
+// Remove from watchlist
+router.post('/remove-from-watchlist', async (req, res) => {
   const { email, cardId } = req.body;
 
   try {
-    const user = await User.findOne({ email }).populate('cardCollection');
-
+    const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Get card name from populated collection
-    const card = user.cardCollection.find(c => c._id.toString() === cardId);
-    const cardName = card ? card.name : 'Unknown card';
-
-    // Remove card from collection
-    user.cardCollection.pull(cardId);
-
-    // Log activity
-    if (!Array.isArray(user.activityLog)) {
-    user.activityLog = [];
-    }
-    user.activityLog.unshift({
-    message: `Removed ${cardName} from collection`,
-    timestamp: new Date()
-    });
-
-
-    // Keep only last 10 logs
-    user.activityLog = user.activityLog.slice(0, 10);
-
+    user.watchlist.pull(cardId);
     await user.save();
 
-    res.json({ message: 'Card removed', updated: user });
+    res.json({ message: 'Removed from watchlist' });
   } catch (err) {
-    console.error('Failed to remove card:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Get watchlist
+router.get('/watchlist', async (req, res) => {
+  const { email } = req.query;
+  const user = await User.findOne({ email }).populate('watchlist');
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  res.json(user.watchlist);
+});
+
+// Owned cards
 router.get('/owned-cards', async (req, res) => {
   const email = req.query.email;
   const user = await User.findOne({ email }).populate('cardCollection');
@@ -151,19 +136,85 @@ router.get('/owned-cards', async (req, res) => {
   res.json(user.cardCollection);
 });
 
-router.get('/activity', async (req, res) => {
-  try {
-    const { email } = req.query;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+// Collection count
+router.get('/collection-count', async (req, res) => {
+  const user = await User.findOne({ email: req.query.email });
+  if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const log = user.activityLog || []; // fallback if undefined
-    res.json(log.slice(0, 2));
+  res.json({ count: user.cardCollection.length });
+});
+
+// Collection value
+router.get('/collection-value', async (req, res) => {
+  const user = await User.findOne({ email: req.query.email }).populate('cardCollection');
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
+  res.json({ total });
+});
+
+// Activity log
+router.get('/activity', async (req, res) => {
+  const { email } = req.query;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  res.json((user.activityLog || []).slice(0, 2));
+});
+
+// Portfolio history
+router.get('/portfolio-history', async (req, res) => {
+  try {
+    const { email, range } = req.query;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const now = new Date();
+    let startDate;
+    const ranges = {
+      '1D': 1, '3D': 3, '7D': 7, '30D': 30, '3M': 90, '6M': 180, '1Y': 365
+    };
+    startDate = new Date(now - (ranges[range] || 7) * 86400000);
+
+    const history = await PortfolioHistory.find({
+      email,
+      timestamp: { $gte: startDate }
+    }).sort({ timestamp: 1 });
+
+    if (history.length === 0) {
+      const user = await User.findOne({ email }).populate('cardCollection');
+      const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
+      const entries = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now - i * 86400000);
+        entries.push({ email, value: total, timestamp: date });
+      }
+
+      await PortfolioHistory.insertMany(entries);
+      return res.json(entries);
+    }
+
+    res.json(history);
   } catch (err) {
-    console.error('Activity fetch error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Update portfolio value
+router.post('/update-portfolio-value', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).populate('cardCollection');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
+
+    await PortfolioHistory.create({ email, value: total, timestamp: new Date() });
+
+    res.json({ message: 'Portfolio value updated' });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 module.exports = router;

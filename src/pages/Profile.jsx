@@ -1,6 +1,7 @@
-  import React, { useState, useRef } from "react";
-  import "./Profile.css";
-  import axios from "axios";
+import React, { useState, useRef, useEffect } from "react";
+import "./Profile.css";
+import axios from "axios";
+import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
 
   export default function Profile() {
     const [profilePic, setProfilePic] = useState(localStorage.getItem('profilePic') || '/avatar.png');
@@ -84,50 +85,24 @@
       }
     };
 
-    const handleRemoveCard = () => {
-      if (!selectedCard) return alert("Pick a card to remove");
-
-      axios.post('http://localhost:5000/api/user/remove-from-collection', {
-        email,
-        cardId: selectedCard
-      }).then(() => {
-        alert("Card removed!");
-      }).catch(err => {
-        console.error('Remove failed', err);
-        alert("Failed to remove card.");
-      });
-    };
-
-
-    const triggerFileSelect = () => {
-      fileInputRef.current.click();
-    };
-
-    return (
-      <div className="profile-page">
-        <div className="profile-header">
-          <div className="profile-left">
-            <img src={profilePic} alt="Profile" className="profile-pic-large" />
-
-          <h2 className="profile-name">
-            {fullName}
-          </h2>
-
-
-            <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleFileChange} 
-              accept="image/*" 
-              style={{ display: 'none' }} 
-            />
-
-            <div className="contact-info">
-              <div>
-                <img src="/mail.png" alt="email" />
-                {email}
-                </div>
+  return (
+    <div className="profile-page">
+      <div className="profile-header">
+        <div className="profile-left">
+          <h2 className="profile-name">{fullName}</h2>
+          <img src={profilePic} alt="Profile" className="profile-pic-large" />
+          <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+          <div className="contact-info">
+            <div>
+              <img src="/mail.png" alt="email" />
+              {email}
             </div>
           </div>
         <div className="profile-right">
@@ -142,22 +117,26 @@
             </div>
           ))}
         </div>
-        </div>
+      </div>
 
+      <div className="profile-info">
+      </div>
+
+      <div className="collection-container">
         <div className="profile-footer">
-
           <div className="stat">
-            <img src="/Gallery.png" />
+            <DollarSign size={24} />
             <span>Collection Value: ${collectionValue.toFixed(2)}</span>
           </div>
           <div className="stat">
-            <img src="/PokeMMO.png" />
-            <span>{collectionCount} Pokemons Owned</span>
+            <img src="pokeball-transparent.png" alt="Pokeball" />
+            <span>{collectionCount} Pokemon Owned</span>
           </div>
-            <button className="add-btn" onClick={() => setShowModal(true)}>
-              <img src="/Collection.png" />
-              Add to Collection
-            </button>
+
+          <button className="add-btn" onClick={() => setShowModal(true)}>
+            <PlusCircle size={24} />
+            Add to Collection
+          </button>
 
           {showModal && (
             <div className="modal-backdrop">
@@ -175,29 +154,29 @@
             </div>
           )}
 
-        <button className="delete-btn" onClick={() => setShowDeleteModal(true)}>
-          <img src="/Delete.png" />
-          Delete from Collection
-        </button>
-        {showDeleteModal && (
-          <div className="modal-backdrop">
-            <div className="modal">
-              <h3>Select a Card to Remove</h3>
-              <select onChange={(e) => setSelectedCard(e.target.value)}>
-                <option value="">Choose one</option>
-                {ownedCards.map(card => (
-                  <option key={card._id} value={card._id}>{card.name}</option>
-                ))}
-              </select>
-              <button onClick={() => {
-                handleRemoveCard();
-                setShowDeleteModal(false);
-              }}>Delete</button>
-              <button className="close-btn" onClick={() => setShowDeleteModal(false)}>Close</button>
-            </div>
-          </div>
-        )}
+          <button className="delete-btn" onClick={() => setShowDeleteModal(true)}>
+            <Trash2 size={24} />
+            Delete from Collection
+          </button>
 
+          {showDeleteModal && (
+            <div className="modal-backdrop">
+              <div className="modal">
+                <h3>Select a Card to Remove</h3>
+                <select onChange={(e) => setSelectedCard(e.target.value)}>
+                  <option value="">Choose one</option>
+                  {ownedCards.map(card => (
+                    <option key={card._id} value={card._id}>{card.name}</option>
+                  ))}
+                </select>
+                <button onClick={() => {
+                  handleRemoveCard();
+                  setShowDeleteModal(false);
+                }}>Delete</button>
+                <button className="close-btn" onClick={() => setShowDeleteModal(false)}>Close</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

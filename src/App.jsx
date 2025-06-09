@@ -16,7 +16,7 @@ import "./App.css";
 
 function App() {
   const location = useLocation();
-const isLoginPage = location.pathname === "/login" || location.pathname === "/register";
+  const isLoginPage = location.pathname === "/login" || location.pathname === "/register";
 
   if (isLoginPage) {
     return (
