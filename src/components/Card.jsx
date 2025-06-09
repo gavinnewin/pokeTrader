@@ -18,7 +18,8 @@ export default function Card({
   qty = 1,
   noShadow = false,
   inSearch = false,
-  transparent = false
+  transparent = false,
+  noHover = false
 }) {
   const [inventoryOpen, setInventoryOpen] = useState(false);
 
@@ -26,10 +27,10 @@ export default function Card({
     <div
       className={
         `p-8 rounded-xl text-sm relative min-h-[400px] ` +
-        `${noShadow ? '' : 'shadow-md'} ` +
+        `${transparent || noShadow ? '' : 'shadow-md'} ` +
         `${transparent ? '' : 'bg-white dark:bg-[#242424] cursor-pointer'} ` +
         `text-gray-800 dark:text-white ` +
-        `${transparent ? '' : 'transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]'} ` +
+        `${transparent || noHover ? '' : 'transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]'} ` +
         `${className}`
       }
       onClick={onClick}
@@ -99,7 +100,7 @@ export default function Card({
                 href={tcgplayerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-3 text-blue-600 dark:text-blue-400 hover:underline text-sm transition-colors duration-200"
+                className="inline-block mt-3 text-blue-600 dark:text-blue-400 hover:underline text-sm transition-colors duration-200 whitespace-nowrap"
               >
                 🛒 Buy on TCGplayer
               </a>

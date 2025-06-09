@@ -59,7 +59,7 @@ export default function Home() {
     <div className="home">
       {/* Collection Value & Top 3 */}
       <div className="collection-top">
-        <Card className="collection-card">
+        <Card className="collection-card" noHover={true}>
           <h2 className="section-title">Collection Value</h2>
           <LineChart data={chartData} />
           <div className="range-buttons">
@@ -77,7 +77,7 @@ export default function Home() {
           </div>
         </Card>
 
-        <Card className="performers-card">
+        <Card className="performers-card" noHover={true}>
           <h2 className="section-title">Top 3 Performers</h2>
           <div className="performers-list">
             {topPerformers.map(p => (
@@ -96,17 +96,17 @@ export default function Home() {
 
       {/* Portfolio Grid */}
       <div>
-        <h2 className="section-title">Your Portfolio</h2>
+        <h2 className="section-title mb-3">Your Portfolio</h2>
         <div className="portfolio-grid">
           {portfolioData.map(item => (
-            <Card key={item.id} className="portfolio-item">
-              <img src={item.image} alt={item.name} />
+            <Card key={item.id} className="portfolio-item !p-4" noHover={true}>
+              <img src={item.image} alt={item.name} className="w-16 h-16 object-contain" />
               <div className="info">
-                <p className="name">{item.name}</p>
-                <p className={`pnl ${item.pnl >= 0 ? "pnl-positive" : "pnl-negative"}`}>
+                <p className="name text-sm">{item.name}</p>
+                <p className={`pnl text-sm ${item.pnl >= 0 ? "pnl-positive" : "pnl-negative"}`}>
                   P&L: ${item.pnl.toFixed(2)}
                 </p>
-                <p className="equity">
+                <p className="equity text-sm">
                   Equity: ${item.equity.toFixed(2)}
                 </p>
               </div>
