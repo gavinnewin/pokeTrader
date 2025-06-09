@@ -23,12 +23,26 @@ export default function Register() {
     }
 
     try {
+      // First register the user
       await axios.post(`${API}/api/auth/register`, {
         fullName,
         email,
         password
       });
-      navigate('/login');
+
+      // Then automatically log them in
+      const loginRes = await axios.post(`${API}/api/auth/login`, {
+        email,
+        password
+      });
+
+      // Store the user data
+      localStorage.setItem("token", loginRes.data.token);
+      localStorage.setItem("fullName", loginRes.data.fullName);
+      localStorage.setItem("email", loginRes.data.email);
+
+      // Redirect to home page
+      navigate('/home');
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
     }
