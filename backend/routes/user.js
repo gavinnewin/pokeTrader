@@ -1,24 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const streamifier = require('streamifier');
 const cloudinary = require('../config/cloudinary');
-const User = require('../models/user');
+const User = require('../models/User');
 const Card = require('../models/Card');
 const PortfolioHistory = require('../models/PortfolioHistory');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-const upload = multer();
-
-// Upload profile picture
 router.post('/upload-profile', upload.single('profilePic'), async (req, res) => {
   try {
+    console.log("➡️ Upload request received");
+    console.log("📨 req.body.email:", req.body.email);
+    console.log("📸 req.file:", req.file);
+
     const userEmail = req.body.email;
-    if (!userEmail) return res.status(400).json({ error: 'Missing email' });
+    if (!userEmail || !req.file) {
+      return res.status(400).json({ error: 'Missing email or file' });
+    }
 
     const stream = cloudinary.uploader.upload_stream(
       { folder: 'profile_pics' },
       async (err, result) => {
-        if (err) return res.status(500).json({ error: 'Upload failed' });
+        if (err) {
+          console.error('❌ Cloudinary error:', err);
+          return res.status(500).json({ error: 'Cloudinary upload failed' });
+        }
+
+        console.log("✅ Cloudinary upload success:", result.secure_url);
 
         const updatedUser = await User.findOneAndUpdate(
           { email: userEmail },
@@ -26,15 +36,49 @@ router.post('/upload-profile', upload.single('profilePic'), async (req, res) => 
           { new: true }
         );
 
-        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        if (!updatedUser) {
+          console.error("❌ User not found for:", userEmail);
+          return res.status(404).json({ error: 'User not found' });
+        }
 
+        console.log("✅ DB updated with new profilePic");
         res.json({ message: 'Uploaded successfully', url: result.secure_url });
       }
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('❌ Upload handler exception:', err);
+    res.status(500).json({ error: 'Server error during upload' });
+  }
+});
+
+
+router.post('/test-upload', upload.single('profilePic'), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ error: 'No file uploaded or file buffer missing' });
+    }
+
+    console.log("📸 File received:", req.file.originalname);
+
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'profile_test' },
+      (err, result) => {
+        if (err) {
+          console.error('❌ Cloudinary upload failed:', err);
+          return res.status(500).json({ error: 'Cloudinary upload failed', details: err.message });
+        }
+
+        console.log('✅ Cloudinary URL:', result.secure_url);
+        return res.json({ message: 'Upload successful', url: result.secure_url });
+      }
+    );
+
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+  } catch (err) {
+    console.error('❌ Unexpected error:', err);
+    res.status(500).json({ error: 'Unexpected server error', details: err.message });
   }
 });
 
