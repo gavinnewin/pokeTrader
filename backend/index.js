@@ -17,10 +17,10 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGO_URI;
 
 if (!MONGODB_URI) {
-  console.error('MONGODB_URI is not defined in environment variables');
+  console.error('MONGO_URI is not defined in environment variables');
   process.exit(1);
 }
 
