@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      'your-secret-key', // In production, use environment variable
+      process.env.JWT_SECRET, // In production, use environment variable
       { expiresIn: '24h' }
     );
 
@@ -101,7 +101,7 @@ router.post('/google-login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      'your-secret-key', // In production, use environment variable
+      process.env.JWT_SECRET, // In production, use environment variable
       { expiresIn: '24h' }
     );
 

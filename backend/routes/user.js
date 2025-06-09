@@ -59,6 +59,17 @@ router.post('/add-to-collection', async (req, res) => {
   }
 });
 
+
+// Optional debug route to list all users
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 // Remove from collection
 router.post('/remove-from-collection', async (req, res) => {
   const { email, cardId } = req.body;
