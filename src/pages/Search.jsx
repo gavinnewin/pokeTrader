@@ -49,15 +49,6 @@ export default function Search() {
     setFilters(newFilters);
   };
 
-  const shuffleArray = (array) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-
   const applyFilters = (cards) => {
     let filtered = [...cards];
 
@@ -88,9 +79,7 @@ export default function Search() {
     }
 
     // Apply sorting
-    if (filters.sortBy === 'random') {
-      filtered = shuffleArray(filtered);
-    } else {
+    if (filters.sortBy !== 'random') {
       filtered.sort((a, b) => {
         switch (filters.sortBy) {
           case 'price_asc':
@@ -164,6 +153,14 @@ export default function Search() {
     </div>
   );
 
+  const hasActiveFilters = () => {
+    return query.trim() || 
+           filters.priceRange.min || 
+           filters.priceRange.max || 
+           filters.rarity.length > 0 || 
+           filters.sortBy !== 'random';
+  };
+
   return (
     <div className="search-page p-4 text-white">
       <div className="max-w-screen-xl mx-auto">
@@ -180,7 +177,7 @@ export default function Search() {
         <Section
           title={query ? `Results for "${query}"` : "Featured"}
           items={displayCards}
-          cardSize="w-80"
+          cardSize="w-52"
           showBuyLink={false}
           showSetAndRarity={true}
         />
@@ -189,7 +186,7 @@ export default function Search() {
           <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
             <Card
               {...selectedCard}
-              className="w-96 mx-auto"
+              className="w-52 mx-auto"
               showSetAndRarity={true}
               showBuyLink={false}
             />
