@@ -24,15 +24,14 @@ const handleLogin = async () => {
         'Content-Type': 'application/json'
       }
     });
-
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("fullName", res.data.user.fullName);
-    localStorage.setItem('email', res.data.user.email);
+localStorage.setItem("token", res.data.token);
+localStorage.setItem("fullName", res.data.fullName); // not res.data.user.fullName
+localStorage.setItem("email", res.data.email);
 
     navigate('/home');
   } catch (err) {
-    setError(err.response?.data?.error || "Login failed");
-  }
+    console.error('LOGIN ERROR:', err.response?.data || err.message); // 🔍 Add this
+    setError(err.response?.data?.error || "Login failed");  }
 };
 
 
