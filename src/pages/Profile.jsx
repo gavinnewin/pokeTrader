@@ -3,10 +3,11 @@ import "./Profile.css";
 import axios from "axios";
 import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
 
+const API = import.meta.env.VITE_API_URL;
+
   export default function Profile() {
     const [profilePic, setProfilePic] = useState(localStorage.getItem('profilePic') || '/avatar.png');
     const fileInputRef = useRef();
-
     const fullName = localStorage.getItem('fullName') || 'Guest';
     const email = localStorage.getItem('email') || 'noemail@example.com';
 
@@ -20,32 +21,32 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
     const [activityLog, setActivityLog] = useState([]);
 
     React.useEffect(() => {
-  axios.get(`http://localhost:5000/api/user/activity?email=${email}`)
+  axios.get(`${API}/api/user/activity?email=${email}`)
     .then(res => setActivityLog(res.data))
     .catch(err => console.error('Activity fetch failed', err));
 }, []);
 
 
     React.useEffect(() => {
-      axios.get(`http://localhost:5000/api/user/owned-cards?email=${email}`)
+      axios.get(`${API}/api/user/owned-cards?email=${email}`)
         .then(res => setOwnedCards(res.data))
         .catch(err => console.error('Owned cards fetch failed', err));
     }, []);
 
     React.useEffect(() => {
-      axios.get(`http://localhost:5000/api/user/collection-count?email=${email}`)
+      axios.get(`${API}/api/user/collection-count?email=${email}`)
         .then(res => setCollectionCount(res.data.count))
         .catch(err => console.error('Count fetch failed', err));
     }, []);
 
     React.useEffect(() => {
-      axios.get('http://localhost:5000/api/cards')
+      axios.get(`${API}/api/cards`)
         .then(res => setCards(res.data))
         .catch(err => console.error('Card fetch failed', err));
     }, []);
 
     React.useEffect(() => {
-      axios.get(`http://localhost:5000/api/user/collection-value?email=${email}`)
+      axios.get(`${API}/api/user/collection-value?email=${email}`)
       .then(res => setCollectionValue(res.data.total))
       .catch(err => console.error('Value fetch failed', err));
     }, []);
@@ -53,7 +54,7 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
     const handleAddCard = () => {
       if (!selectedCard) return alert("Pick a card first");
 
-      axios.post('http://localhost:5000/api/user/add-to-collection', {
+      axios.post(`${API}/api/user/add-to-collection`, {
         email: localStorage.getItem('email'),
         cardId: selectedCard
       }).then(() => {
@@ -64,6 +65,20 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
       });
     };
 
+    const handleRemoveCard = () => {
+  if (!selectedCard) return alert("Pick a card first");
+
+  axios.post(`${API}/api/user/remove-from-collection`, {
+    email: localStorage.getItem('email'),
+    cardId: selectedCard
+  }).then(() => {
+    alert("Card removed!");
+  }).catch(err => {
+    console.error('Remove failed', err);
+    alert("Failed to remove card.");
+  });
+};
+
     const handleFileChange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -73,7 +88,7 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
       formData.append('email', localStorage.getItem('email')); // 🔁 replace with actual auth user ID
 
       try {
-        const res = await axios.post('http://localhost:5000/api/user/upload-profile', formData, {
+        const res = await axios.post(`${API}/api/user/upload-profile`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
 

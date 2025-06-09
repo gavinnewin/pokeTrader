@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import AuthLeftPanel from "../components/AuthLeftPanel";
+const API = import.meta.env.VITE_API_URL;
 
 const logo = "/pokeball.png";
 
@@ -13,26 +14,30 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password
-      });
+const handleLogin = async () => {
+  try {
+    const res = await axios.post(`${API}/api/auth/login`, {
+      email,
+      password
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+localStorage.setItem("token", res.data.token);
+localStorage.setItem("fullName", res.data.fullName); // not res.data.user.fullName
+localStorage.setItem("email", res.data.email);
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("fullName", res.data.user.fullName);
-      localStorage.setItem('email', res.data.user.email);
+    navigate('/home');
+  } catch (err) {
+    console.error('LOGIN ERROR:', err.response?.data || err.message); // 🔍 Add this
+    setError(err.response?.data?.error || "Login failed");  }
+};
 
-      navigate('/home');
-    } catch (err) {
-      setError(err.response?.data?.error || "Login failed");
-    }
-  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+      const res = await axios.post(`${API}/api/auth/google-login`, {
         credential: credentialResponse.credential
       });
 

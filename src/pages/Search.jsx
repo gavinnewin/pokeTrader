@@ -4,6 +4,8 @@ import Section from "../components/Section";
 
 import Modal from "../components/Modal";
 import Card from "../components/Card";
+const API = import.meta.env.VITE_API_URL;
+
 
 export default function Search() {
   const [query, setQuery] = useState("");

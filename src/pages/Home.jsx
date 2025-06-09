@@ -75,7 +75,7 @@ export default function Home() {
     <div className="home">
       {/* Collection Value & Top 3 */}
       <div className="collection-top">
-        <Card className="collection-card">
+        <Card className="collection-card" noHover={true}>
           <h2 className="section-title">Collection Value</h2>
           <LineChart data={chartData} />
           <div className="range-buttons">
@@ -93,7 +93,7 @@ export default function Home() {
           </div>
         </Card>
 
-        <Card className="performers-card">
+        <Card className="performers-card" noHover={true}>
           <h2 className="section-title">Top 3 Performers</h2>
           <div className="performers-list">
             {topPerformers.map(p => (
@@ -112,7 +112,7 @@ export default function Home() {
 
       {/* Portfolio Grid */}
       <div>
-        <h2 className="section-title">Your Portfolio</h2>
+        <h2 className="section-title mb-3">Your Portfolio</h2>
         <div className="portfolio-grid">
           {portfolioCards.map(card => (
             <Card key={card._id} className="portfolio-item">

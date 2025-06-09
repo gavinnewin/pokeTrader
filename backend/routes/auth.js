@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "435567560693-pnmqmb8t5to8mcpmk4udbkjnul0pdviv.apps.googleusercontent.com");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      'your-secret-key', // In production, use environment variable
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -78,7 +78,7 @@ router.post('/google-login', async (req, res) => {
     // Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID || "435567560693-pnmqmb8t5to8mcpmk4udbkjnul0pdviv.apps.googleusercontent.com"
+      audience: process.env.GOOGLE_CLIENT_ID
     });
 
     const payload = ticket.getPayload();
@@ -101,7 +101,7 @@ router.post('/google-login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
-      'your-secret-key', // In production, use environment variable
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
