@@ -11,4 +11,5 @@ const CardSchema = new mongoose.Schema({
   printedTotal: Number,
 });
 
-module.exports = mongoose.model('Card', CardSchema);
+// Only create the model if it hasn't been created yet
+module.exports = mongoose.models.Card || mongoose.model('Card', CardSchema);

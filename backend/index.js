@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const cardRoutes = require('./routes/cards');
+
 require('dotenv').config();
 
 const app = express();
@@ -17,10 +20,10 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGO_URI;
 
 if (!MONGODB_URI) {
-  console.error('MONGODB_URI is not defined in environment variables');
+  console.error('MONGO_URI is not defined in environment variables');
   process.exit(1);
 }
 
@@ -37,6 +40,8 @@ mongoose.connect(MONGODB_URI)
 // Routes
 console.log('Setting up routes...');
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/cards', cardRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -58,6 +63,9 @@ const server = app.listen(PORT, () => {
   console.log('- POST /api/auth/register');
   console.log('- POST /api/auth/login');
   console.log('- POST /api/auth/google-login');
+  console.log('- POST /api/user/add-card');
+  console.log('- GET /api/user/owned-cards');
+  console.log('- GET /api/user/portfolio-history');
 });
 
 // Handle server errors
