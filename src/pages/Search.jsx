@@ -113,7 +113,7 @@ export default function Search() {
         <Section
           title={query ? `Results for "${query}"` : "Featured"}
           items={displayCards}
-          cardSize="w-52"
+          cardSize="w-80"
           showBuyLink={false}
           showSetAndRarity={true}
         />
@@ -122,7 +122,7 @@ export default function Search() {
           <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
             <Card
               {...selectedCard}
-              className="w-64 mx-auto"
+              className="w-96 mx-auto"
               showSetAndRarity={true}
               showBuyLink={false}
             />
