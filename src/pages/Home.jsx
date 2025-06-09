@@ -6,7 +6,7 @@ import LineChart from "../components/LineChart";
 import MiniSparkline from "../components/MiniSparkline";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
-import { topPerformers, portfolioData } from "../data";
+import { topPerformers } from "../data";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -15,6 +15,7 @@ export default function Home() {
   const [selectedRange, setSelectedRange] = useState("7D");
   const [selectedPerformer, setSelectedPerformer] = useState(null);
   const [portfolioHistory, setPortfolioHistory] = useState([]);
+  const [portfolioCards, setPortfolioCards] = useState([]);
   const email = localStorage.getItem('email') || 'noemail@example.com';
 
   useEffect(() => {
@@ -32,6 +33,21 @@ export default function Home() {
 
     fetchPortfolioHistory();
   }, [selectedRange, email]);
+
+  useEffect(() => {
+    const fetchPortfolioCards = async () => {
+      try {
+        const res = await axios.get(`${API}/api/user/owned-cards`, {
+          params: { email }
+        });
+        setPortfolioCards(res.data);
+      } catch (err) {
+        console.error('Failed to fetch portfolio cards:', err);
+      }
+    };
+
+    fetchPortfolioCards();
+  }, [email]);
 
   // Update portfolio value periodically
   useEffect(() => {
@@ -98,20 +114,14 @@ export default function Home() {
       <div>
         <h2 className="section-title mb-3">Your Portfolio</h2>
         <div className="portfolio-grid">
-          {portfolioData.map(item => (
-            <Card key={item.id} className="portfolio-item !p-4" noHover={true}>
-              <img src={item.image} alt={item.name} className="w-16 h-16 object-contain" />
+          {portfolioCards.map(card => (
+            <Card key={card._id} className="portfolio-item">
+              <img src={card.image} alt={card.name} />
               <div className="info">
-                <p className="name text-sm">{item.name}</p>
-                <p className={`pnl text-sm ${item.pnl >= 0 ? "pnl-positive" : "pnl-negative"}`}>
-                  P&L: ${item.pnl.toFixed(2)}
+                <p className="name">{card.name}</p>
+                <p className="equity">
+                  Value: ${card.price?.toFixed(2) || '0.00'}
                 </p>
-                <p className="equity text-sm">
-                  Equity: ${item.equity.toFixed(2)}
-                </p>
-              </div>
-              <div className="sparkline">
-                <MiniSparkline data={item.sparkData} />
               </div>
             </Card>
           ))}

@@ -32,11 +32,6 @@ export default function Navbar() {
       <div className="navbar-right">
         <span className="username">{fullName}</span>
 
-        <img
-          src={profilePic}
-          alt="Profile"
-          className="profile-pic"
-        />
 
         <button
           className="mode-toggle"
