@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+require('dotenv').config();
 
 const app = express();
 
@@ -16,7 +17,12 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://pokeman:phDg29p7R4UfNYw@poketraderdb.ngvauom.mongodb.net/users?retryWrites=true&w=majority&appName=PokeTraderDB';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not defined in environment variables');
+  process.exit(1);
+}
 
 console.log('Attempting to connect to MongoDB...');
 mongoose.connect(MONGODB_URI)
