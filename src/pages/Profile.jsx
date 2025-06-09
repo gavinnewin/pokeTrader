@@ -79,26 +79,6 @@ const API = import.meta.env.VITE_API_URL;
   });
 };
 
-    const handleFileChange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append('profilePic', file);
-      formData.append('email', localStorage.getItem('email')); // 🔁 replace with actual auth user ID
-
-      try {
-        const res = await axios.post(`${API}/api/user/upload-profile`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-
-        const url = res.data.url;
-        localStorage.setItem('profilePic', url);
-        setProfilePic(url);
-      } catch (err) {
-        console.error('Upload failed', err);
-      }
-    };
 const triggerFileSelect = (e) => {
   e.preventDefault();
   fileInputRef.current.click();
@@ -109,15 +89,6 @@ const triggerFileSelect = (e) => {
 <div className="profile-header">
   <div className="profile-left">
     <h2 className="profile-name">{fullName}</h2>
-    <img src={profilePic} alt="Profile" className="profile-pic-large" />
-    <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
-    <input
-      type="file"
-      ref={fileInputRef}
-      onChange={handleFileChange}
-      accept="image/*"
-      style={{ display: 'none' }}
-    />
     <div className="contact-info">
       <div>
         <img src="/mail.png" alt="email" />
