@@ -12,7 +12,14 @@ export default function Modal({ isOpen, onClose, children }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        {children}
+        <div className="modal-body">
+          {React.Children.map(children, child => {
+            if (React.isValidElement(child) && child.type.name === 'Card') {
+              return React.cloneElement(child, { transparent: true });
+            }
+            return child;
+          })}
+        </div>
       </div>
     </div>
   );
