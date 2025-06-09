@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import AuthLeftPanel from "../components/AuthLeftPanel";
-const API = import.meta.env.VITE_API_URL;
+import ForgotPassword from "../components/ForgotPassword";
+
+// Ensure API URL doesn't end with a slash
+const API = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:5000';
 
 const logo = "/pokeball.png";
 
@@ -12,28 +15,31 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-const handleLogin = async () => {
-  try {
-    const res = await axios.post(`${API}/api/auth/login`, {
-      email,
-      password
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-localStorage.setItem("token", res.data.token);
-localStorage.setItem("fullName", res.data.fullName); // not res.data.user.fullName
-localStorage.setItem("email", res.data.email);
+  const handleLogin = async () => {
+    try {
+      console.log('Attempting login with API:', API);
+      const res = await axios.post(`${API}/api/auth/login`, {
+        email,
+        password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("fullName", res.data.fullName);
+      localStorage.setItem("email", res.data.email);
 
-    navigate('/home');
-  } catch (err) {
-    console.error('LOGIN ERROR:', err.response?.data || err.message); // 🔍 Add this
-    setError(err.response?.data?.error || "Login failed");  }
-};
-
+      navigate('/home');
+    } catch (err) {
+      console.error('LOGIN ERROR:', err.response?.data || err.message);
+      setError(err.response?.data?.error || "Login failed");
+    }
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -48,6 +54,7 @@ localStorage.setItem("email", res.data.email);
 
       navigate('/home');
     } catch (err) {
+      console.error('GOOGLE LOGIN ERROR:', err.response?.data || err.message);
       setError(err.response?.data?.error || "Google login failed");
     }
   };
@@ -78,7 +85,9 @@ localStorage.setItem("email", res.data.email);
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <a href="#">Forgot Password?</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowForgotPassword(true); }}>
+            Forgot Password?
+          </a>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -103,6 +112,9 @@ localStorage.setItem("email", res.data.email);
           </div>
         </div>
       </div>
+      {showForgotPassword && (
+        <ForgotPassword onClose={() => setShowForgotPassword(false)} />
+      )}
     </div>
   );
 };

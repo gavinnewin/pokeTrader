@@ -11,18 +11,22 @@ import Logout from "./pages/Logout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Marketplace from "./pages/Marketplace";
+import ResetPassword from "./pages/ResetPassword";
 
 import "./App.css";
 
 function App() {
   const location = useLocation();
-  const isLoginPage = location.pathname === "/login" || location.pathname === "/register";
+  const isLoginPage = location.pathname === "/login" || 
+                     location.pathname === "/register" || 
+                     location.pathname.startsWith("/reset-password");
 
   if (isLoginPage) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );

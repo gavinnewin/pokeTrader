@@ -27,7 +27,10 @@ if (!MONGODB_URI) {
   process.exit(1);
 }
 
-console.log('Attempting to connect to MongoDB...');
+// Log masked connection string for debugging
+const maskedUri = MONGODB_URI.replace(/\/\/([^:]+):([^@]+)@/, '//****:****@');
+console.log('Attempting to connect to MongoDB with URI:', maskedUri);
+
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully');
