@@ -84,44 +84,48 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
         console.error('Upload failed', err);
       }
     };
+const triggerFileSelect = (e) => {
+  e.preventDefault();
+  fileInputRef.current.click();
+};
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        <div className="profile-left">
-          <h2 className="profile-name">{fullName}</h2>
-          <img src={profilePic} alt="Profile" className="profile-pic-large" />
-          <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
-          <div className="contact-info">
-            <div>
-              <img src="/mail.png" alt="email" />
-              {email}
-            </div>
-          </div>
-        <div className="profile-right">
-          <h2>Activity</h2>
-          {activityLog.map((entry, index) => (
-            <div className="card-activity" key={index}>
-              <img src="/pokeball.png" alt="card" />
-              <div>
-                <strong>{entry.message}</strong>
-                <p>{new Date(entry.timestamp).toLocaleString()}</p>
-              </div>
-            </div>
-          ))}
+<div className="profile-header">
+  <div className="profile-left">
+    <h2 className="profile-name">{fullName}</h2>
+    <img src={profilePic} alt="Profile" className="profile-pic-large" />
+    <a href="#" className="change-pic" onClick={triggerFileSelect}>change profile picture</a>
+    <input
+      type="file"
+      ref={fileInputRef}
+      onChange={handleFileChange}
+      accept="image/*"
+      style={{ display: 'none' }}
+    />
+    <div className="contact-info">
+      <div>
+        <img src="/mail.png" alt="email" />
+        {email}
+      </div>
+    </div>
+  </div> {/* <-- this closes profile-left properly */}
+
+  <div className="profile-right">
+    <h2>Activity</h2>
+    {activityLog.map((entry, index) => (
+      <div className="card-activity" key={index}>
+        <img src="/pokeball.png" alt="card" />
+        <div>
+          <strong>{entry.message}</strong>
+          <p>{new Date(entry.timestamp).toLocaleString()}</p>
         </div>
       </div>
-
+    ))}
+  </div>
+</div>
       <div className="profile-info">
       </div>
-
       <div className="collection-container">
         <div className="profile-footer">
           <div className="stat">
@@ -178,6 +182,7 @@ import { DollarSign, PlusCircle, Trash2 } from "lucide-react";
             </div>
           )}
         </div>
+      </div>
       </div>
     );
   }
