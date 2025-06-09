@@ -1,7 +1,228 @@
 .profile-page {
-  padding: -1rem;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  min-height: 100vh;
+  @apply bg-gray-50 dark:bg-[#1a1a1a];
+}
+
+.profile-section {
+  @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm p-8 mb-8;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.profile-info {
+  flex-grow: 1;
+}
+
+.profile-name {
+  font-size: 2rem;
+  font-weight: 600;
   color: #1a1a1a;
+  margin: 0;
+  @apply dark:text-white;
+}
+
+.profile-email {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0.5rem 0 0;
+  @apply dark:text-gray-400;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  @apply dark:border-gray-700;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  @apply dark:text-white;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  @apply dark:text-gray-400;
+}
+
+.portfolio-section {
+  @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm p-8;
+}
+
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  @apply dark:text-white;
+}
+
+.collection-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.add-btn, .delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.add-btn {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.delete-btn {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.portfolio-item {
+  @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm overflow-hidden;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.portfolio-item .info {
+  padding: 1rem;
+}
+
+.portfolio-item .name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+  @apply dark:text-white;
+}
+
+.portfolio-item .equity {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.5rem 0 0;
+  @apply dark:text-gray-400;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 500px;
+  @apply dark:bg-[#242424];
+}
+
+.modal h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  @apply text-gray-800 dark:text-white;
+}
+
+.modal select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  @apply bg-white dark:bg-[#1a1a1a] border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white;
+}
+
+.modal button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.modal .close-btn {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+.loading {
+  color: #6b7280;
+  @apply dark:text-gray-400;
+}
+
+.error {
+  color: #ef4444;
 }
 
 /* Top section layout */
@@ -20,14 +241,6 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-}
-
-.profile-name {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-  color: #1a1a1a;
-  text-align: center;
 }
 
 .profile-pic-large {
@@ -161,46 +374,6 @@
 
 .delete-btn:hover svg {
   color: #ff6b6b;
-}
-
-.modal-backdrop {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
-}
-
-.modal {
-  background: #ffffff; padding: 20px; border-radius: 10px;
-  display: flex; flex-direction: column; gap: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal h3 {
-  color: #1a1a1a;
-  margin-top: 0;
-}
-
-select {
-  background-color: #f5f5f5;
-  color: #1a1a1a;
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-select option {
-  background-color: #ffffff;
-  color: #1a1a1a;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  color: #1a1a1a;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
 }
 
 /* Dark mode styles */

@@ -73,6 +73,35 @@ export default function Home() {
 
   return (
     <div className="home">
+      {/* Profile Section */}
+      <div className="profile-section">
+        <div className="profile-header">
+          <div className="profile-avatar">
+            <div className="avatar-placeholder">
+              {email.charAt(0).toUpperCase()}
+            </div>
+          </div>
+          <div className="profile-info">
+            <h1 className="profile-name">{email.split('@')[0]}</h1>
+            <p className="profile-email">{email}</p>
+          </div>
+        </div>
+        <div className="profile-stats">
+          <div className="stat-item">
+            <span className="stat-value">{portfolioCards.length}</span>
+            <span className="stat-label">Cards</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">${portfolioCards.reduce((sum, card) => sum + (card.price || 0), 0).toFixed(2)}</span>
+            <span className="stat-label">Total Value</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">{portfolioCards.filter(card => card.price > 100).length}</span>
+            <span className="stat-label">Premium Cards</span>
+          </div>
+        </div>
+      </div>
+
       {/* Collection Value & Top 3 */}
       <div className="collection-top">
         <Card className="collection-card" noHover={true}>
