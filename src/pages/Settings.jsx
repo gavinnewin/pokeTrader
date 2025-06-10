@@ -5,6 +5,8 @@ import axios from "axios";
 
 const API = import.meta.env.VITE_API_URL;
 
+const API = import.meta.env.VITE_API_URL;
+
 export default function SettingsPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
