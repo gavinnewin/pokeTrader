@@ -319,4 +319,30 @@ router.post('/update-portfolio-value', async (req, res) => {
   }
 });
 
+router.post('/update-name', async (req, res) => {
+  const { email, newName } = req.body;
+  const user = await User.findOneAndUpdate({ email }, { fullName: newName }, { new: true });
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ message: 'Name updated', user });
+});
+
+router.post('/update-email', async (req, res) => {
+  const { currentEmail, newEmail } = req.body;
+  const existing = await User.findOne({ email: newEmail });
+  if (existing) return res.status(400).json({ error: 'Email already in use' });
+  const user = await User.findOneAndUpdate({ email: currentEmail }, { email: newEmail }, { new: true });
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ message: 'Email updated', user });
+});
+
+router.post('/update-password', async (req, res) => {
+  const { email, newPassword } = req.body;
+  const salt = await bcrypt.genSalt(10);
+  const hashed = await bcrypt.hash(newPassword, salt);
+  const user = await User.findOneAndUpdate({ email }, { password: hashed });
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ message: 'Password updated' });
+});
+
+
 module.exports = router;

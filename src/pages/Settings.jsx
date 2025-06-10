@@ -1,29 +1,34 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Settings.css";
 import axios from "axios";
 
+const API = import.meta.env.VITE_API_URL;
+
 export default function SettingsPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
+    return localStorage.getItem("theme") === "dark";
   });
 
-  useEffect(() => {
-    // Initial check
-    setIsDarkMode(document.documentElement.classList.contains('dark'));
+  const [modalType, setModalType] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const email = localStorage.getItem('email');
 
-    // Listen for theme changes
+  useEffect(() => {
+    setIsDarkMode(document.documentElement.classList.contains("dark"));
+
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          const isDark = document.documentElement.classList.contains('dark');
-          setIsDarkMode(isDark);
+        if (mutation.attributeName === "class") {
+          setIsDarkMode(document.documentElement.classList.contains("dark"));
         }
       });
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ["class"]
     });
 
     return () => observer.disconnect();
@@ -102,11 +107,47 @@ export default function SettingsPage() {
 
         <div className="section">
           <h2>Profile:</h2>
-          <button className="settings-btn">Change Password</button>
-          <button className="settings-btn">Change Username</button>
-          <button className="settings-btn">Change Email</button>
+          <button className="settings-btn" onClick={() => {
+            setModalType("password");
+            setShowModal(true);
+            setInputValue("");
+          }}>
+            Change Password
+          </button>
+          <button className="settings-btn" onClick={() => {
+            setModalType("name");
+            setShowModal(true);
+            setInputValue("");
+          }}>
+            Change Username
+          </button>
+          <button className="settings-btn" onClick={() => {
+            setModalType("email");
+            setShowModal(true);
+            setInputValue("");
+          }}>
+            Change Email
+          </button>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>Update {modalType}</h3>
+            <input
+              type={modalType === "password" ? "password" : "text"}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={`Enter new ${modalType}`}
+            />
+            <div style={{ marginTop: '1rem' }}>
+              <button onClick={handleUpdate}>Submit</button>
+              <button className="close-btn" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
