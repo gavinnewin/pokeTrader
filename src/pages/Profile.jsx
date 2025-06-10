@@ -46,6 +46,9 @@ const handleRemoveCard = () => {
     cardId: selectedCard._id,
     quantity: quantityToRemove
   }).then(() => {
+    // Dispatch custom event to notify of card collection change
+    window.dispatchEvent(new Event('cardCollectionChanged'));
+    
     alert("Card(s) removed!");
     setShowDeleteModal(false);
     fetchPortfolioCards(); // refresh

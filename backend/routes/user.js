@@ -202,29 +202,75 @@ router.get('/portfolio-history', async (req, res) => {
     const ranges = {
       '1D': 1, '3D': 3, '7D': 7, '30D': 30, '3M': 90, '6M': 180, '1Y': 365
     };
-    startDate = new Date(now - (ranges[range] || 7) * 86400000);
+    const days = ranges[range] || 7;
+    startDate = new Date(now - days * 86400000);
+
+    console.log('Fetching portfolio history for:', email);
+    console.log('Date range:', { startDate, now, days });
 
     const history = await PortfolioHistory.find({
       email,
       timestamp: { $gte: startDate }
     }).sort({ timestamp: 1 });
 
-    if (history.length === 0) {
-      const user = await User.findOne({ email }).populate('cardCollection');
-      const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
-      const entries = [];
+    console.log('Found history entries:', history.length);
 
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(now - i * 86400000);
+    if (history.length === 0) {
+      console.log('No history found, creating initial entries');
+      const user = await User.findOne({ email }).populate('cardCollection.card');
+      
+      // Calculate total value of collection
+      const total = user.cardCollection.reduce((sum, entry) => {
+        if (!entry.card) {
+          console.log('Warning: Card not found for entry:', entry);
+          return sum;
+        }
+        const cardValue = parseFloat(entry.card.price) || 0;
+        const quantity = parseInt(entry.qty) || 1;
+        const entryValue = cardValue * quantity;
+        console.log('Card value calculation:', {
+          name: entry.card.name,
+          price: cardValue,
+          qty: quantity,
+          entryValue
+        });
+        return sum + entryValue;
+      }, 0);
+
+      console.log('Total collection value:', total);
+
+      const entries = [];
+      // Create appropriate number of data points based on range
+      const numPoints = Math.min(days, 30); // Cap at 30 points for performance
+      const interval = days / numPoints;
+
+      for (let i = numPoints; i >= 0; i--) {
+        const date = new Date(now - i * interval * 86400000);
         entries.push({ email, value: total, timestamp: date });
       }
 
       await PortfolioHistory.insertMany(entries);
+      console.log('Created initial entries:', entries);
       return res.json(entries);
     }
 
+    // If we have history entries, ensure we have enough data points
+    if (history.length < 2) {
+      // If we only have one entry, duplicate it for the start date
+      const firstEntry = history[0];
+      const newEntry = new PortfolioHistory({
+        email,
+        value: firstEntry.value,
+        timestamp: startDate
+      });
+      await newEntry.save();
+      history.unshift(newEntry);
+    }
+
+    console.log('Sending history:', history);
     res.json(history);
   } catch (err) {
+    console.error('Error in portfolio history:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -233,15 +279,42 @@ router.get('/portfolio-history', async (req, res) => {
 router.post('/update-portfolio-value', async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email }).populate('cardCollection');
+    const user = await User.findOne({ email }).populate('cardCollection.card');
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const total = user.cardCollection.reduce((sum, card) => sum + (card.price || 0), 0);
+    // Calculate total value of collection
+    const total = user.cardCollection.reduce((sum, entry) => {
+      if (!entry.card) {
+        console.log('Warning: Card not found for entry:', entry);
+        return sum;
+      }
+      const cardValue = parseFloat(entry.card.price) || 0;
+      const quantity = parseInt(entry.qty) || 1;
+      const entryValue = cardValue * quantity;
+      console.log('Card value calculation:', {
+        name: entry.card.name,
+        price: cardValue,
+        qty: quantity,
+        entryValue
+      });
+      return sum + entryValue;
+    }, 0);
 
-    await PortfolioHistory.create({ email, value: total, timestamp: new Date() });
+    console.log('Total collection value:', total);
 
-    res.json({ message: 'Portfolio value updated' });
+    // Create new history entry
+    const historyEntry = new PortfolioHistory({
+      email,
+      value: total,
+      timestamp: new Date()
+    });
+
+    await historyEntry.save();
+    console.log('Created new history entry:', historyEntry);
+
+    res.json({ message: 'Portfolio value updated', value: total });
   } catch (err) {
+    console.error('Error updating portfolio value:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

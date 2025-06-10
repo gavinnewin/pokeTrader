@@ -120,6 +120,9 @@ const handleAddToPortfolio = async () => {
       quantity
     });
 
+    // Dispatch custom event to notify of card collection change
+    window.dispatchEvent(new Event('cardCollectionChanged'));
+
     alert(`${selectedCard.name} (x${quantity}) added to your portfolio!`);
     setModalOpen(false);
   } catch (err) {
