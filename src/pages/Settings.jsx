@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Settings.css";
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -36,23 +33,29 @@ export default function SettingsPage() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUpdate = async () => {
+    let endpoint = "";
+    let payload = {};
+
+    if (modalType === "name") {
+      endpoint = "/api/user/update-name";
+      payload = { email, newName: inputValue };
+      localStorage.setItem("fullName", inputValue);
+    } else if (modalType === "email") {
+      endpoint = "/api/user/update-email";
+      payload = { currentEmail: email, newEmail: inputValue };
+      localStorage.setItem("email", inputValue);
+    } else if (modalType === "password") {
+      endpoint = "/api/user/update-password";
+      payload = { email, newPassword: inputValue };
+    }
+
     try {
-      const res = await axios.post(`${API}/api/user/update-settings`, {
-        email: email,
-        settings: {
-          darkMode: darkMode,
-          notifications: notifications,
-          language: language
-        }
-      });
-      // alert("Settings updated successfully!");
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      await axios.post(`${API}${endpoint}`, payload);
+      alert(`${modalType} updated!`);
+      setShowModal(false);
     } catch (err) {
-      console.error('Failed to update settings:', err);
-      // alert("Failed to update settings");
+      alert(err.response?.data?.error || "Update failed");
     }
   };
 
@@ -61,13 +64,6 @@ export default function SettingsPage() {
       <div className="settings-card">
         <div className="section">
           <h2>Configuration:</h2>
-          <div className="setting-item">
-            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              strokeWidth="1.5" stroke="currentColor" className="setting-icon">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
-            </svg>
-            <span>Language: English</span> */}
-          </div>
           <div className="setting-item">
             {isDarkMode ? (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -84,25 +80,8 @@ export default function SettingsPage() {
                   d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
               </svg>
             )}
-            <span>Theme: {isDarkMode ? 'Dark Mode' : 'Light Mode'}</span>
+            <span>Theme: {isDarkMode ? "Dark Mode" : "Light Mode"}</span>
           </div>
-          {/* <div className="setting-item">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="setting-icon"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
-              />
-            </svg>
-            <span>Notifications: Pop Up</span>
-          </div> */}
         </div>
 
         <hr />
