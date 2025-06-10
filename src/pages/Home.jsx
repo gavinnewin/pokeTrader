@@ -84,7 +84,7 @@ export default function Home() {
   }, [fetchPortfolioCards, updatePortfolioValue]);
 
   const chartData = portfolioHistory.map(entry => ({
-    time: new Date(entry.timestamp).toLocaleDateString(),
+    time: entry.timestamp,
     value: parseFloat(entry.value)
   }));
 
