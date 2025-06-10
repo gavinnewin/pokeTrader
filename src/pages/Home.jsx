@@ -10,6 +10,7 @@ import { topPerformers } from "../data";
 
 const API = import.meta.env.VITE_API_URL;
 
+
 export default function Home() {
   const ranges = ["1D","3D","7D","30D","3M","6M","1Y","All"];
   const [selectedRange, setSelectedRange] = useState("7D");
@@ -70,7 +71,10 @@ export default function Home() {
     time: new Date(entry.timestamp).toLocaleDateString(),
     value: entry.value
   })) : [];
-
+const top3Cards = [...portfolioCards]
+  .filter(card => card && typeof card.price === 'number')
+  .sort((a, b) => b.price - a.price)
+  .slice(0, 3);
   return (
     <div className="home">
       {/* Profile Section */}
@@ -128,21 +132,22 @@ export default function Home() {
           </div>
         </Card>
 
-        <Card className="performers-card" noHover={true}>
-          <h2 className="section-title">Top 3 Cards</h2>
-          <div className="performers-list">
-            {topPerformers.map(p => (
-              <div 
-                key={p.id} 
-                className="performer-card"
-                onClick={() => setSelectedPerformer(p)}
-                style={{ cursor: 'pointer' }}
-              >
-                <img src={p.image} alt={p.name} />
+      <Card className="performers-card" noHover={true}>
+        <h2 className="section-title">Top 3 Cards</h2>
+        <div className="performers-list">
+          {top3Cards.map(card => (
+            <div key={card._id} className="performer-card">
+              <img src={card.image} alt={card.name} />
+              <div className="card-info">
+                <p className="card-name">{card.name}</p>
+                {card.subtitle && <p className="card-subtitle">{card.subtitle}</p>}
+                <p className="card-price">${card.price.toFixed(2)}</p>
               </div>
-            ))}
-          </div>
-        </Card>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       </div>
 
       {/* Portfolio Grid */}
@@ -169,27 +174,6 @@ export default function Home() {
         ©2025 PokeTrader. All rights reserved.
       </footer>
 
-      {/* Modal for Top Performer Details */}
-      <Modal 
-        isOpen={!!selectedPerformer} 
-        onClose={() => setSelectedPerformer(null)}
-      >
-        {selectedPerformer && (
-          <div className="performer-details">
-            <img 
-              src={selectedPerformer.image} 
-              alt={selectedPerformer.name} 
-              className="performer-image-large"
-            />
-            <h2>{selectedPerformer.name}</h2>
-            <div className="performer-stats">
-              <p>Current Value: $1,234.56</p>
-              <p>24h Change: +5.67%</p>
-              <p>7d Change: +12.34%</p>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }
