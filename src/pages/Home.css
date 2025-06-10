@@ -1,6 +1,4 @@
-/* Home.css */
 
-/* Outer container */
 .home {
   padding: 1.5rem;
   min-height: 100vh;
@@ -8,78 +6,86 @@
   box-sizing: border-box;
 }
 
-/* space-y-8 */
 .home > * + * {
   margin-top: 2rem;
 }
 
-/* Collection & Performers cards */
-.home .collection-card,
-.home .performers-card {
-  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
-  padding: 1.5rem;
-  box-sizing: border-box;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Make Collection Value card a column-flex so its footer stays at the bottom */
-.home .collection-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* Optional spacing tweak under the title */
-.home .collection-card .section-title {
-  margin-bottom: 1rem;
-}
-
-/* Collection Value & Top 3 Performers Grid */
 .collection-top {
   display: grid;
   gap: 1.5rem;
-  /* Two cards of min 20rem each, but wrap when too narrow */
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   justify-content: center;
 }
 
-/* Section headers */
 .section-title {
   color: #1a1a1a;
-  font-size: 10rem;    /* text-xl */
-  font-weight: 600;      /* font-semibold */
-  margin-bottom: 1rem;   /* mb-4 */
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  @apply dark:text-white;
 }
 
-/* Range selector buttons */
 .range-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;           /* gap-2 */
-  margin-top: 1rem;      /* mt-4 */
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .range-btn {
-  padding: 0.25rem 0.75rem;      /* py-1 px-3 */
-  border-radius: 9999px;         /* rounded-full */
-  font-size: 0.875rem;           /* text-sm */
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
   transition: all 0.2s;
   border: 1px solid #e5e7eb;
   color: #4b5563;
   background: white;
   cursor: pointer;
+  @apply dark:border-gray-600 dark:bg-[#242424] dark:text-gray-300;
 }
 
 .range-btn:hover {
   border-color: #ef4444;
   color: #ef4444;
+  @apply dark:border-red-400 dark:text-red-400;
 }
 
 .range-btn--selected {
   background: #ef4444;
   color: white;
   border-color: transparent;
+  @apply dark:bg-red-500;
+}
+
+.collection-card,
+.performers-card {
+  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.current-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f87171;
+  @apply dark:text-red-400;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #6b7280;
+  @apply dark:text-gray-400;
 }
 
 .performers-list {
@@ -141,81 +147,52 @@
   color: #4ade80;
 }
 
-
-
-
-
-/* Portfolio grid */
 .portfolio-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   justify-content: center;
 }
 
-/* Individual portfolio item */
-.home .portfolio-item {
-  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
-  display:flexbox;
-  align-items: center;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.portfolio-item {
+  @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm overflow-hidden;
+  transition: transform 0.2s;
 }
 
-/* Portfolio item image */
-.home .portfolio-item img {
-  width: 15rem;
-  height: 15rem;
+.portfolio-item:hover {
+  transform: translateY(-2px);
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 200px;
   object-fit: contain;
-  object-position: center;
+  padding: 1rem;
 }
 
-.card-subtitle {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 2px;
-}
-
-/* Portfolio item text */
 .portfolio-item .info {
-  flex: 1;
+  padding: 1rem;
 }
 
 .portfolio-item .name {
-  color: #1a1a1a;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  @apply text-gray-800 dark:text-white;
 }
 
 .portfolio-item .equity {
-  @apply text-gray-600 dark:text-gray-400;
   font-size: 0.875rem;
+  color: #6b7280;
+  @apply dark:text-gray-400;
 }
 
-/* P&L coloring */
-.pnl-positive {
-  @apply text-green-500;
-}
-
-.pnl-negative {
-  @apply text-red-500;
-}
-
-/* Sparkline container */
-.sparkline {
-  width: 4rem;
-  height: 2rem;
-}
-
-/* Footer */
 .footer {
   text-align: center;
-  font-size: 0.75rem;
-  color: #4a5568;
-  margin-top: 3rem;
+  padding: 2rem 0;
+  color: #6b7280;
+  @apply dark:text-gray-400;
 }
 
-/* Performer Details Modal */
 .performer-details {
   display: flex;
   flex-direction: column;
@@ -232,142 +209,6 @@
   border-radius: 12px;
 }
 
-.performer-details h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.performer-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.performer-stats p {
-  @apply text-gray-600 dark:text-gray-300;
-}
-
-.home-page {
-  @apply bg-gray-50 dark:bg-[#1a1a1a] text-gray-800 dark:text-white;
-  padding: 2rem;
-  padding-left: 7rem;
-}
-
-.home-header {
-  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
-  padding: 2rem;
-  border-radius: 1rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.home-header h1 {
-  @apply text-gray-800 dark:text-white;
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.home-header p {
-  @apply text-gray-600 dark:text-gray-300;
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.collection-card {
-  @apply bg-white dark:bg-[#242424] text-gray-800 dark:text-white;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.collection-card h2 {
-  @apply text-gray-800 dark:text-white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.collection-card p {
-  @apply text-gray-600 dark:text-gray-300;
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.performer-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 12px;
-  background-color: #1f1f1f;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: visible;
-  min-height: 260px; /* ⬅️ Increase as needed */
-}
-
-.performer-card h2 {
-  @apply text-gray-800 dark:text-white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.performer-card p {
-  @apply text-gray-600 dark:text-gray-300;
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.performer-card button {
-  @apply bg-red-500 hover:bg-red-600 text-white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.performer-card button:hover {
-  @apply bg-red-600;
-}
-
-/* Dark mode styles */
-:root[class~="dark"] .home {
-  @apply bg-[#1a1a1a] text-white;
-}
-
-:root[class~="dark"] .section-title {
-  color: white;
-}
-
-:root[class~="dark"] .portfolio-item .name {
-  color: white;
-}
-
-:root[class~="dark"] .footer {
-  color: #e2e8f0;
-}
-
-:root[class~="dark"] .range-btn {
-  border-color: #4b5563;
-  color: #e5e7eb;
-  background: #242424;
-}
-
-:root[class~="dark"] .range-btn:hover {
-  border-color: #ef4444;
-  color: #ef4444;
-}
-
-:root[class~="dark"] .range-btn--selected {
-  background: #ef4444;
-  color: white;
-  border-color: transparent;
-}
-
-/* Profile Section */
 .profile-section {
   @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm p-8 mb-8;
 }
@@ -395,7 +236,6 @@
   font-size: 2.5rem;
   font-weight: 600;
   text-transform: uppercase;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .profile-info {
@@ -447,3 +287,35 @@
   @apply dark:text-gray-400;
 }
 
+:root[class~="dark"] .home {
+  @apply bg-[#1a1a1a] text-white;
+}
+
+:root[class~="dark"] .section-title {
+  color: white;
+}
+
+:root[class~="dark"] .portfolio-item .name {
+  color: white;
+}
+
+:root[class~="dark"] .footer {
+  color: #e2e8f0;
+}
+
+:root[class~="dark"] .range-btn {
+  border-color: #4b5563;
+  color: #e5e7eb;
+  background: #242424;
+}
+
+:root[class~="dark"] .range-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+:root[class~="dark"] .range-btn--selected {
+  background: #ef4444;
+  color: white;
+  border-color: transparent;
+}

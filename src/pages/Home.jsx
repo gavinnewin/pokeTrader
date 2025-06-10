@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Home.css";
 import axios from "axios";
 
 import LineChart from "../components/LineChart";
-import MiniSparkline from "../components/MiniSparkline";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
-import { topPerformers } from "../data";
 
 const API = import.meta.env.VITE_API_URL;
-
 
 export default function Home() {
   const ranges = ["1D","3D","7D","30D","3M","6M","1Y","All"];
@@ -17,105 +14,173 @@ export default function Home() {
   const [selectedPerformer, setSelectedPerformer] = useState(null);
   const [portfolioHistory, setPortfolioHistory] = useState([]);
   const [portfolioCards, setPortfolioCards] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const email = localStorage.getItem('email') || 'noemail@example.com';
 
-  useEffect(() => {
-    const fetchPortfolioHistory = async () => {
-      try {
-        const res = await axios.get(`${API}/api/user/portfolio-history`, {
-          params: { email, range: selectedRange }
-        });
-        setPortfolioHistory(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error('Failed to fetch portfolio history:', err);
-        setPortfolioHistory([]);
-      }
-    };
+  const fetchPortfolioHistory = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/api/user/portfolio-history`, {
+        params: { email, range: selectedRange }
+      });
+      setPortfolioHistory(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Failed to fetch portfolio history:', err);
+      setPortfolioHistory([]);
+    }
+  }, [email, selectedRange]);
 
+  const fetchPortfolioCards = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/api/user/owned-cards`, {
+        params: { email }
+      });
+      setPortfolioCards(res.data);
+    } catch (err) {
+      console.error('Failed to fetch portfolio cards:', err);
+    }
+  }, [email]);
+
+  const updatePortfolioValue = useCallback(async () => {
+    try {
+      await axios.post(`${API}/api/user/update-portfolio-value`, { email });
+      await fetchPortfolioHistory();
+    } catch (err) {
+      console.error('Failed to update portfolio value:', err);
+    }
+  }, [email, fetchPortfolioHistory]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchPortfolioHistory(), fetchPortfolioCards()]);
+      setIsLoading(false);
+    };
+    loadData();
+  }, [fetchPortfolioHistory, fetchPortfolioCards]);
+
+  useEffect(() => {
     fetchPortfolioHistory();
-  }, [selectedRange, email]);
+  }, [selectedRange, fetchPortfolioHistory]);
 
   useEffect(() => {
-    const fetchPortfolioCards = async () => {
-      try {
-        const res = await axios.get(`${API}/api/user/owned-cards`, {
-          params: { email }
-        });
-        setPortfolioCards(res.data);
-      } catch (err) {
-        console.error('Failed to fetch portfolio cards:', err);
-      }
-    };
-
-    fetchPortfolioCards();
-  }, [email]);
-
-  // Update portfolio value periodically
-  useEffect(() => {
-    const updatePortfolioValue = async () => {
-      try {
-        await axios.post(`${API}/api/user/update-portfolio-value`, { email });
-      } catch (err) {
-        console.error('Failed to update portfolio value:', err);
-      }
-    };
-
-    // Update every hour
     const interval = setInterval(updatePortfolioValue, 60 * 60 * 1000);
-    updatePortfolioValue(); // Initial update
-
+    updatePortfolioValue();
     return () => clearInterval(interval);
-  }, [email]);
+  }, [updatePortfolioValue]);
 
-  const chartData = Array.isArray(portfolioHistory) ? portfolioHistory.map(entry => ({
+  useEffect(() => {
+    const handleCardChange = async () => {
+      await Promise.all([
+        fetchPortfolioCards(),
+        updatePortfolioValue()
+      ]);
+    };
+
+    window.addEventListener('cardCollectionChanged', handleCardChange);
+    return () => {
+      window.removeEventListener('cardCollectionChanged', handleCardChange);
+    };
+  }, [fetchPortfolioCards, updatePortfolioValue]);
+
+  const chartData = portfolioHistory.map(entry => ({
     time: new Date(entry.timestamp).toLocaleDateString(),
-    value: entry.value
-  })) : [];
-const top3Cards = [...portfolioCards]
-  .filter(card => card && typeof card.price === 'number')
-  .sort((a, b) => b.price - a.price)
-  .slice(0, 3);
+    value: parseFloat(entry.value)
+  }));
+
+  const totalValue = portfolioCards.reduce((sum, card) => sum + ((card.price || 0) * (card.qty || 1)), 0);
+  const totalCards = portfolioCards.reduce((sum, card) => sum + (card.qty || 1), 0);
+  const premiumCards = portfolioCards.filter(card => card.price > 100).length;
+
+  const top3Cards = [...portfolioCards]
+    .filter(card => card && typeof card.price === 'number')
+    .sort((a, b) => b.price - a.price)
+    .slice(0, 3);
+
   return (
     <div className="home">
+<<<<<<< HEAD
       {/* Collection Value & Top 3 */}
+=======
+      <div className="profile-section">
+        <div className="profile-header">
+          <div className="profile-avatar">
+            <div className="avatar-placeholder">
+              {email.charAt(0).toUpperCase()}
+            </div>
+          </div>
+          <div className="profile-info">
+            <h1 className="profile-name">{email.split('@')[0]}</h1>
+            <p className="profile-email">{email}</p>
+          </div>
+        </div>
+        <div className="profile-stats">
+          <div className="stat-item">
+            <span className="stat-value">{totalCards}</span>
+            <span className="stat-label">Cards</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">${totalValue.toFixed(2)}</span>
+            <span className="stat-label">Total Value</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">{premiumCards}</span>
+            <span className="stat-label">Premium Cards</span>
+          </div>
+        </div>
+      </div>
+
+>>>>>>> 708967999267ad4af1ff7f4765d230d90fac52dc
       <div className="collection-top">
         <Card className="collection-card" noHover={true}>
-          <h2 className="section-title">Collection Value</h2>
-          <LineChart data={chartData} />
-          <div className="range-buttons">
-            {ranges.map(r => (
-              <button
-                key={r}
-                onClick={() => setSelectedRange(r)}
-                className={`range-btn ${
-                  selectedRange === r ? "range-btn--selected" : ""
-                }`}
+          <div className="collection-header">
+            <h2 className="section-title">Collection Value</h2>
+            <div className="current-value">
+              ${totalValue.toFixed(2)}
+            </div>
+          </div>
+          {isLoading ? (
+            <div className="loading">Loading chart data...</div>
+          ) : (
+            <>
+              <LineChart data={chartData} />
+              <div className="range-buttons">
+                {ranges.map(range => (
+                  <button
+                    key={range}
+                    onClick={() => setSelectedRange(range)}
+                    className={`range-btn ${selectedRange === range ? "range-btn--selected" : ""}`}
+                  >
+                    {range}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </Card>
+
+        <Card className="performers-card" noHover={true}>
+          <h2 className="section-title">Top 3 Cards</h2>
+          <div className="performers-list">
+            {top3Cards.map(card => (
+              <div 
+                key={card._id} 
+                className="performer-card"
+                onClick={() => setSelectedPerformer(card)}
+                style={{ cursor: 'pointer' }}
               >
-                {r}
-              </button>
+                <img src={card.image} alt={card.name} />
+                <div className="card-info">
+                  <p className="card-name">{card.name}</p>
+                  {card.subtitle && <p className="card-subtitle">{card.subtitle}</p>}
+                  <p className="card-price">${card.price.toFixed(2)}</p>
+                </div>
+              </div>
             ))}
           </div>
         </Card>
-
-      <Card className="performers-card" noHover={true}>
-        <h2 className="section-title">Top 3 Cards</h2>
-        <div className="performers-list">
-          {top3Cards.map(card => (
-            <div key={card._id} className="performer-card">
-              <img src={card.image} alt={card.name} />
-              <div className="card-info">
-                <p className="card-name">{card.name}</p>
-                {card.subtitle && <p className="card-subtitle">{card.subtitle}</p>}
-                <p className="card-price">${card.price.toFixed(2)}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
       </div>
 
-      {/* Portfolio Grid */}
       <div>
         <h2 className="section-title mb-3">Your Portfolio</h2>
         <div className="portfolio-grid">
@@ -124,21 +189,37 @@ const top3Cards = [...portfolioCards]
               <img src={card.image} alt={card.name} />
               <div className="info">
                 <p className="name">{card.name}</p>
-               <p className="equity">Qty: {card.qty || 1}</p>
-                 <p className="equity">
-                  Value: ${(card.price * (card.qty || 1)).toFixed(2)}
-                </p>
+                <p className="equity">Qty: {card.qty || 1}</p>
+                <p className="equity">Value: ${(card.price * (card.qty || 1)).toFixed(2)}</p>
               </div>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="footer">
         ©2025 PokeTrader. All rights reserved.
       </footer>
 
+      <Modal 
+        isOpen={!!selectedPerformer} 
+        onClose={() => setSelectedPerformer(null)}
+      >
+        {selectedPerformer && (
+          <div className="performer-details">
+            <img 
+              src={selectedPerformer.image} 
+              alt={selectedPerformer.name} 
+              className="performer-image-large"
+            />
+            <h2>{selectedPerformer.name}</h2>
+            <div className="performer-stats">
+              <p>Current Value: ${selectedPerformer.price?.toFixed(2)}</p>
+              <p>Qty: {selectedPerformer.qty || 1}</p>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
