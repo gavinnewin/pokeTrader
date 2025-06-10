@@ -335,14 +335,5 @@ router.post('/update-email', async (req, res) => {
   res.json({ message: 'Email updated', user });
 });
 
-router.post('/update-password', async (req, res) => {
-  const { email, newPassword } = req.body;
-  const salt = await bcrypt.genSalt(10);
-  const hashed = await bcrypt.hash(newPassword, salt);
-  const user = await User.findOneAndUpdate({ email }, { password: hashed });
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json({ message: 'Password updated' });
-});
-
 
 module.exports = router;

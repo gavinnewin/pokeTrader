@@ -45,9 +45,6 @@ export default function SettingsPage() {
       endpoint = "/api/user/update-email";
       payload = { currentEmail: email, newEmail: inputValue };
       localStorage.setItem("email", inputValue);
-    } else if (modalType === "password") {
-      endpoint = "/api/user/update-password";
-      payload = { email, newPassword: inputValue };
     }
 
     try {
@@ -88,13 +85,6 @@ export default function SettingsPage() {
 
         <div className="section">
           <h2>Profile:</h2>
-          <button className="settings-btn" onClick={() => {
-            setModalType("password");
-            setShowModal(true);
-            setInputValue("");
-          }}>
-            Change Password
-          </button>
           <button className="settings-btn" onClick={() => {
             setModalType("name");
             setShowModal(true);
