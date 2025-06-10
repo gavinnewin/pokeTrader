@@ -108,9 +108,9 @@ useEffect(() => {
                 <img src={card.image} alt={card.name} />
                 <div className="info">
                   <p className="name">{card.name}</p>
-                  <p className="equity">
-                    Value: ${card.price?.toFixed(2) || '0.00'}
-                  </p>
+                    <p className="equity">
+                      Qty: {card.qty} — Value: ${(card.price * card.qty).toFixed(2)}
+                    </p>
                 </div>
               </Card>
             ))}

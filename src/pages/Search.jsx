@@ -107,19 +107,21 @@ export default function Search() {
     onClick: () => handleCardClick(card)
   }));
 
-const handleAddToPortfolio = async (card) => {
-  const quantity = card.qty || 1; // get the user-selected qty
-  setAddingCard(card.id);
+const handleAddToPortfolio = async () => {
   const email = localStorage.getItem('email') || 'noemail@example.com';
+  const quantity = selectedCard.qty || 1;
+
+  setAddingCard(selectedCard._id);
 
   try {
     await axios.post(`${API}/api/user/add-to-collection`, {
-    email,
-    cardId: card._id,
-    quantity
+      email,
+      cardId: selectedCard._id,
+      quantity
     });
 
-    alert(`${card.name} (x${quantity}) added to your portfolio!`);
+    alert(`${selectedCard.name} (x${quantity}) added to your portfolio!`);
+    setModalOpen(false);
   } catch (err) {
     console.error("Failed to add card to portfolio:", err);
     alert("Failed to add card to portfolio. Please try again.");
@@ -127,6 +129,7 @@ const handleAddToPortfolio = async (card) => {
     setAddingCard(null);
   }
 };
+
 
 
   const renderCard = (card) => (
@@ -203,12 +206,12 @@ const handleAddToPortfolio = async (card) => {
           transparent={true} // ✅ this unlocks the Qty UI
         />
 
-            <button
-              onClick={() => handleAddToPortfolio(selectedCard)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all"
-            >
-              Add to Portfolio
-            </button>
+        <button
+          onClick={handleAddToPortfolio}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all"
+        >
+          Add to Portfolio
+        </button>
           </div>
         </Modal>
         )}

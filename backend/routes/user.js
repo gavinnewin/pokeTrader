@@ -5,7 +5,6 @@ const Card = require('../models/Card');
 const PortfolioHistory = require('../models/PortfolioHistory');
 
 
-// Add to collection
 router.post('/add-to-collection', async (req, res) => {
   const { email, cardId, quantity = 1 } = req.body;
 
@@ -14,12 +13,17 @@ router.post('/add-to-collection', async (req, res) => {
     const card = await Card.findById(cardId);
     if (!user || !card) return res.status(404).json({ error: 'User or card not found' });
 
-       for (let i = 0; i < quantity; i++) {
-      user.cardCollection.push(cardId);
+    // Check if the card already exists in collection
+    const existing = user.cardCollection.find(entry => entry.card.toString() === cardId);
+
+    if (existing) {
+      existing.qty += quantity;
+    } else {
+      user.cardCollection.push({ card: cardId, qty: quantity });
     }
 
     user.activityLog ||= [];
-    user.activityLog.unshift({ message: `Added ${card.name} to collection`, timestamp: new Date() });
+    user.activityLog.unshift({ message: `Added ${quantity}x ${card.name} to collection`, timestamp: new Date() });
     user.activityLog = user.activityLog.slice(0, 10);
 
     await user.save();
@@ -29,6 +33,7 @@ router.post('/add-to-collection', async (req, res) => {
     res.status(500).json({ error: 'Failed to add card' });
   }
 });
+
 
 
 // Optional debug route to list all users
@@ -41,28 +46,59 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// Remove from collection
+
+// Get cards owned by a user
+router.get('/owned-cards', async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const user = await User.findOne({ email }).populate('cardCollection.card');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Flatten cardCollection for frontend
+    const cards = user.cardCollection.map(entry => ({
+      ...entry.card.toObject(),
+      qty: entry.qty
+    }));
+
+    res.json(cards);
+  } catch (err) {
+    console.error('Failed to get owned cards:', err);
+    res.status(500).json({ error: 'Failed to retrieve owned cards' });
+  }
+});
+
 router.post('/remove-from-collection', async (req, res) => {
   const { email, cardId } = req.body;
 
   try {
-    const user = await User.findOne({ email }).populate('cardCollection');
+    const user = await User.findOne({ email }).populate('cardCollection.card');
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const card = user.cardCollection.find(c => c._id.toString() === cardId);
-    const cardName = card ? card.name : 'Unknown card';
+    const entry = user.cardCollection.find(c => c.card._id.toString() === cardId);
+    if (!entry) return res.status(404).json({ error: 'Card not found in collection' });
 
-    user.cardCollection.pull(cardId);
+    const cardName = entry.card.name;
+
+    // Decrease qty or remove
+    if (entry.qty > 1) {
+      entry.qty -= 1;
+    } else {
+      user.cardCollection = user.cardCollection.filter(c => c.card._id.toString() !== cardId);
+    }
+
     user.activityLog ||= [];
-    user.activityLog.unshift({ message: `Removed ${cardName} from collection`, timestamp: new Date() });
+    user.activityLog.unshift({ message: `Removed 1x ${cardName} from collection`, timestamp: new Date() });
     user.activityLog = user.activityLog.slice(0, 10);
 
     await user.save();
-    res.json({ message: 'Card removed', updated: user });
+    res.json({ message: 'Card updated', updated: user });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Add to watchlist
 router.post('/add-to-watchlist', async (req, res) => {
@@ -109,14 +145,6 @@ router.get('/watchlist', async (req, res) => {
   res.json(user.watchlist);
 });
 
-// Owned cards
-router.get('/owned-cards', async (req, res) => {
-  const email = req.query.email;
-  const user = await User.findOne({ email }).populate('cardCollection');
-  if (!user) return res.status(404).json({ error: 'User not found' });
-
-  res.json(user.cardCollection);
-});
 
 // Collection count
 router.get('/collection-count', async (req, res) => {

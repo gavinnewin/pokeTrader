@@ -20,7 +20,10 @@ const userSchema = new mongoose.Schema({
     minlength: 6
   },
   watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
-  cardCollection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
+  cardCollection: [{
+    card: { type: mongoose.Schema.Types.ObjectId, ref: 'Card' },
+    qty: { type: Number, default: 1 }
+  }],
   activityLog: {
     type: [
       {
