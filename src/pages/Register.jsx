@@ -38,8 +38,9 @@ export default function Register() {
 
       // Store the user data
       localStorage.setItem("token", loginRes.data.token);
-      localStorage.setItem("fullName", loginRes.data.fullName);
-      localStorage.setItem("email", loginRes.data.email);
+    localStorage.setItem("fullName", loginRes.data.user.fullName);
+    localStorage.setItem("email", loginRes.data.user.email);
+
 
       // Redirect to home page
       navigate('/home');

@@ -31,25 +31,29 @@ router.post('/register', async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Create new user
+    // 🔒 Hash the password before saving
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const user = new User({
       fullName,
       email,
-      password
+      password: hashedPassword
     });
 
     await user.save();
     res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
+
 
 // Login user
 router.post('/login', async (req, res) => {
