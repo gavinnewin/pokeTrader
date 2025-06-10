@@ -36,14 +36,11 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // 🔒 Hash the password before saving
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = new User({
       fullName,
       email,
-      password: hashedPassword
+      password
     });
 
     await user.save();
