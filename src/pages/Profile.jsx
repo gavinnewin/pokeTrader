@@ -52,7 +52,7 @@ useEffect(() => {
     });
   };
 
-  const totalValue = portfolioCards.reduce((sum, card) => sum + (card.price || 0), 0);
+const totalValue = portfolioCards.reduce((sum, card) => sum + (card.price * card.qty || 0), 0);
   const premiumCards = portfolioCards.filter(card => card.price > 100).length;
 
   return (
@@ -71,7 +71,9 @@ useEffect(() => {
         </div>
         <div className="profile-stats">
           <div className="stat-item">
-            <span className="stat-value">{portfolioCards.length}</span>
+        <span className="stat-value">
+          {portfolioCards.reduce((sum, card) => sum + (card.qty || 1), 0)}
+        </span>
             <span className="stat-label">Cards</span>
           </div>
           <div className="stat-item">
@@ -79,7 +81,9 @@ useEffect(() => {
             <span className="stat-label">Total Value</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{premiumCards}</span>
+          <span className="stat-value">
+            {portfolioCards.filter(card => (card.price * (card.qty || 1)) > 100).length}
+          </span>
             <span className="stat-label">Premium Cards</span>
           </div>
         </div>
@@ -108,9 +112,9 @@ useEffect(() => {
                 <img src={card.image} alt={card.name} />
                 <div className="info">
                   <p className="name">{card.name}</p>
-                    <p className="equity">
-                      Qty: {card.qty} — Value: ${(card.price * card.qty).toFixed(2)}
-                    </p>
+                  <p className="equity">
+                    Qty: {card.qty || 1} — Value: ${(card.price * (card.qty || 1)).toFixed(2)}
+                  </p>
                 </div>
               </Card>
             ))}

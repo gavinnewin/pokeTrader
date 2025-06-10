@@ -88,15 +88,21 @@ export default function Home() {
         </div>
         <div className="profile-stats">
           <div className="stat-item">
-            <span className="stat-value">{portfolioCards.length}</span>
-            <span className="stat-label">Cards</span>
+        <span className="stat-value">
+          {portfolioCards.reduce((sum, card) => sum + (card.qty || 1), 0)}
+        </span>            
+        <span className="stat-label">Cards</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">${portfolioCards.reduce((sum, card) => sum + (card.price || 0), 0).toFixed(2)}</span>
+          <span className="stat-value">
+            ${portfolioCards.reduce((sum, card) => sum + ((card.price || 0) * (card.qty || 1)), 0).toFixed(2)}
+          </span>
             <span className="stat-label">Total Value</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{portfolioCards.filter(card => card.price > 100).length}</span>
+          <span className="stat-value">
+            {portfolioCards.filter(card => (card.price * (card.qty || 1)) > 100).length}
+          </span>
             <span className="stat-label">Premium Cards</span>
           </div>
         </div>
@@ -148,8 +154,9 @@ export default function Home() {
               <img src={card.image} alt={card.name} />
               <div className="info">
                 <p className="name">{card.name}</p>
-                <p className="equity">
-                  Value: ${card.price?.toFixed(2) || '0.00'}
+               <p className="equity">Qty: {card.qty || 1}</p>
+                 <p className="equity">
+                  Value: ${(card.price * (card.qty || 1)).toFixed(2)}
                 </p>
               </div>
             </Card>
