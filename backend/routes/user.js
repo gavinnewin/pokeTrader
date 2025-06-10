@@ -47,26 +47,42 @@ router.get('/users', async (req, res) => {
 });
 
 
-// Get cards owned by a user
 router.get('/owned-cards', async (req, res) => {
   const { email } = req.query;
 
+  console.log('➡️ Getting owned cards for:', email);
+
   try {
     const user = await User.findOne({ email }).populate('cardCollection.card');
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) {
+      console.warn('⚠️ User not found:', email);
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    // Flatten cardCollection for frontend
-    const cards = user.cardCollection.map(entry => ({
-      ...entry.card.toObject(),
-      qty: entry.qty
-    }));
+    console.log('✅ User found:', user.fullName, '- cardCollection length:', user.cardCollection.length);
 
+    // Optional: log first few entries
+    console.log('🧪 Sample entry:', user.cardCollection[0]);
+
+    const cards = user.cardCollection.map(entry => {
+      if (!entry.card) throw new Error(`Null card in entry: ${JSON.stringify(entry)}`);
+      return {
+        ...entry.card.toObject(),
+        qty: entry.qty
+      };
+    });
+
+    console.log('✅ Cards mapped:', cards.length);
     res.json(cards);
+
   } catch (err) {
-    console.error('Failed to get owned cards:', err);
-    res.status(500).json({ error: 'Failed to retrieve owned cards' });
+    console.error('❌ Failed to get owned cards:', err.message);
+    console.error(err.stack);
+    res.status(500).json({ error: 'Failed to retrieve owned cards', details: err.message });
   }
 });
+
+
 
 router.post('/remove-from-collection', async (req, res) => {
   const { email, cardId } = req.body;

@@ -30,9 +30,10 @@ const Login = () => {
         }
       });
       
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("fullName", res.data.fullName);
-      localStorage.setItem("email", res.data.email);
+  localStorage.setItem("token", res.data.token);
+  localStorage.setItem("fullName", res.data.user.fullName);
+  localStorage.setItem("email", res.data.user.email);
+
 
       navigate('/home');
     } catch (err) {
