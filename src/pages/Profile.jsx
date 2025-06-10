@@ -141,7 +141,7 @@ const premiumCards = portfolioCards.filter(card => card.price > 100).length;
                   <option value="">Choose one</option>
                   {portfolioCards.map(card => (
                     <option key={card._id} value={card._id}>
-                      {card.name} (Qty: {card.qty})
+                      {card.name} - {card.subtitle} (Qty: {card.qty})
                     </option>
                   ))}
                 </select>
