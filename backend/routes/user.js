@@ -85,7 +85,7 @@ router.get('/owned-cards', async (req, res) => {
 
 
 router.post('/remove-from-collection', async (req, res) => {
-  const { email, cardId } = req.body;
+  const { email, cardId, quantity = 1 } = req.body;
 
   try {
     const user = await User.findOne({ email }).populate('cardCollection.card');
@@ -96,15 +96,17 @@ router.post('/remove-from-collection', async (req, res) => {
 
     const cardName = entry.card.name;
 
-    // Decrease qty or remove
-    if (entry.qty > 1) {
-      entry.qty -= 1;
+    if (entry.qty > quantity) {
+      entry.qty -= quantity;
     } else {
       user.cardCollection = user.cardCollection.filter(c => c.card._id.toString() !== cardId);
     }
 
     user.activityLog ||= [];
-    user.activityLog.unshift({ message: `Removed 1x ${cardName} from collection`, timestamp: new Date() });
+    user.activityLog.unshift({ 
+      message: `Removed ${Math.min(quantity, entry.qty)}x ${cardName} from collection`, 
+      timestamp: new Date() 
+    });
     user.activityLog = user.activityLog.slice(0, 10);
 
     await user.save();
@@ -114,6 +116,7 @@ router.post('/remove-from-collection', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // Add to watchlist

@@ -10,8 +10,10 @@ export default function Profile() {
   const [portfolioCards, setPortfolioCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCard, setSelectedCard] = useState('');
+const [selectedCard, setSelectedCard] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [quantityToRemove, setQuantityToRemove] = useState(1);
+
 
   const email = localStorage.getItem('email') || 'noemail@example.com';
 
@@ -35,25 +37,27 @@ useEffect(() => {
 }, [email]);
 
 
-  const handleRemoveCard = () => {
-    if (!selectedCard) return alert("Pick a card first");
+const handleRemoveCard = () => {
+  if (!selectedCard) return alert("Pick a card first");
+  if (quantityToRemove < 1) return alert("Quantity must be at least 1");
 
-    axios.post(`${API}/api/user/remove-from-collection`, {
-      email: email,
-      cardId: selectedCard
-    }).then(() => {
-      alert("Card removed!");
-      setShowDeleteModal(false);
-      // Refresh the portfolio cards
-      fetchPortfolioCards();
-    }).catch(err => {
-      console.error('Remove failed', err);
-      alert("Failed to remove card.");
-    });
-  };
+  axios.post(`${API}/api/user/remove-from-collection`, {
+    email: email,
+    cardId: selectedCard._id,
+    quantity: quantityToRemove
+  }).then(() => {
+    alert("Card(s) removed!");
+    setShowDeleteModal(false);
+    fetchPortfolioCards(); // refresh
+  }).catch(err => {
+    console.error('Remove failed', err);
+    alert("Failed to remove card.");
+  });
+};
+
 
 const totalValue = portfolioCards.reduce((sum, card) => sum + (card.price * card.qty || 0), 0);
-  const premiumCards = portfolioCards.filter(card => card.price > 100).length;
+const premiumCards = portfolioCards.filter(card => card.price > 100).length;
 
   return (
     <div className="profile-page">
@@ -82,7 +86,7 @@ const totalValue = portfolioCards.reduce((sum, card) => sum + (card.price * card
           </div>
           <div className="stat-item">
           <span className="stat-value">
-            {portfolioCards.filter(card => (card.price * (card.qty || 1)) > 100).length}
+            {portfolioCards.filter(card => card.price > 100).length}
           </span>
             <span className="stat-label">Premium Cards</span>
           </div>
@@ -123,20 +127,46 @@ const totalValue = portfolioCards.reduce((sum, card) => sum + (card.price * card
       </div>
 
       {showDeleteModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h3>Select a Card to Remove</h3>
-            <select onChange={(e) => setSelectedCard(e.target.value)}>
-              <option value="">Choose one</option>
-              {portfolioCards.map(card => (
-                <option key={card._id} value={card._id}>{card.name}</option>
-              ))}
-            </select>
-            <button onClick={handleRemoveCard}>Delete</button>
-            <button className="close-btn" onClick={() => setShowDeleteModal(false)}>Close</button>
+          <div className="modal-backdrop">
+            <div className="modal">
+              <h3>Select a Card to Remove</h3>
+
+              <label>
+                Card:
+                <select onChange={(e) => {
+                  const card = portfolioCards.find(c => c._id.toString() === e.target.value);
+                  setSelectedCard(card);
+                  setQuantityToRemove(1);
+                }}>
+                  <option value="">Choose one</option>
+                  {portfolioCards.map(card => (
+                    <option key={card._id} value={card._id}>
+                      {card.name} (Qty: {card.qty})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label style={{ marginTop: '10px', display: 'block' }}>
+                Quantity:
+                <input
+                  type="number"
+                  min="1"
+                  max={selectedCard?.qty || 1}
+                  value={quantityToRemove}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (val <= (selectedCard?.qty || 1)) setQuantityToRemove(val);
+                  }}
+                  style={{ width: '100%', marginTop: '5px' }}
+                />
+              </label>
+
+              <button onClick={handleRemoveCard}>Delete</button>
+              <button className="close-btn" onClick={() => setShowDeleteModal(false)}>Close</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

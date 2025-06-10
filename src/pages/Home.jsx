@@ -101,7 +101,7 @@ export default function Home() {
           </div>
           <div className="stat-item">
           <span className="stat-value">
-            {portfolioCards.filter(card => (card.price * (card.qty || 1)) > 100).length}
+            {portfolioCards.filter(card => card.price > 100).length}
           </span>
             <span className="stat-label">Premium Cards</span>
           </div>
@@ -129,7 +129,7 @@ export default function Home() {
         </Card>
 
         <Card className="performers-card" noHover={true}>
-          <h2 className="section-title">Top 3 Performers</h2>
+          <h2 className="section-title">Top 3 Cards</h2>
           <div className="performers-list">
             {topPerformers.map(p => (
               <div 
