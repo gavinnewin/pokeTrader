@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Settings.css";
+import axios from "axios";
 
 export default function SettingsPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -28,17 +29,37 @@ export default function SettingsPage() {
     return () => observer.disconnect();
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API}/api/user/update-settings`, {
+        email: email,
+        settings: {
+          darkMode: darkMode,
+          notifications: notifications,
+          language: language
+        }
+      });
+      // alert("Settings updated successfully!");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (err) {
+      console.error('Failed to update settings:', err);
+      // alert("Failed to update settings");
+    }
+  };
+
   return (
     <div className="settings-page">
       <div className="settings-card">
         <div className="section">
           <h2>Configuration:</h2>
           <div className="setting-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
               strokeWidth="1.5" stroke="currentColor" className="setting-icon">
               <path strokeLinecap="round" strokeLinejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
             </svg>
-            <span>Language: English</span>
+            <span>Language: English</span> */}
           </div>
           <div className="setting-item">
             {isDarkMode ? (
@@ -58,7 +79,7 @@ export default function SettingsPage() {
             )}
             <span>Theme: {isDarkMode ? 'Dark Mode' : 'Light Mode'}</span>
           </div>
-          <div className="setting-item">
+          {/* <div className="setting-item">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -74,7 +95,7 @@ export default function SettingsPage() {
               />
             </svg>
             <span>Notifications: Pop Up</span>
-          </div>
+          </div> */}
         </div>
 
         <hr />
