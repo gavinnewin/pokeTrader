@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './ForgotPassword.css';
 
-const API = import.meta.env.VITE_API_URL;
+// Ensure API URL doesn't end with a slash
+const API = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:5174';
 
 export default function ForgotPassword({ onClose }) {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ export default function ForgotPassword({ onClose }) {
         onClose();
       }, 3000);
     } catch (err) {
+      console.error('Forgot password error:', err.response?.data || err.message);
       setError(err.response?.data?.error || 'Failed to send reset email');
     }
   };
