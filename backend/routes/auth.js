@@ -5,7 +5,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Verify environment variables
 if (!process.env.GOOGLE_CLIENT_ID) {
@@ -14,17 +17,11 @@ if (!process.env.GOOGLE_CLIENT_ID) {
 if (!process.env.JWT_SECRET) {
   console.error('JWT_SECRET is not defined in environment variables');
 }
+if (!process.env.RESEND_API_KEY) {
+  console.error('RESEND_API_KEY is not defined in environment variables');
+}
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-// Create nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -186,24 +183,41 @@ router.post('/forgot-password', async (req, res) => {
     // Create reset URL
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    // Send email
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: 'Password Reset Request',
+    // Send email using Resend
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: email,
+      subject: 'Password Reset',
       html: `
-        <p>You requested a password reset</p>
-        <p>Click this <a href="${resetUrl}">link</a> to reset your password.</p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this, please ignore this email.</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Reset Your Password</h2>
+          <p>Hello,</p>
+          <p>We received a request to reset your password. Click the button below to create a new password:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" 
+               style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+              Reset Password
+            </a>
+          </div>
+          <p>This link will expire in 1 hour.</p>
+          <p>If you didn't request this password reset, you can safely ignore this email.</p>
+          <hr style="border: 1px solid #eee; margin: 20px 0;">
+          <p style="color: #666; font-size: 12px;">
+            This is an automated message, please do not reply to this email.
+          </p>
+        </div>
       `
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-    res.json({ message: 'Password reset email sent' });
+    if (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ error: 'Error sending reset email' });
+    }
+
+    res.json({ message: 'Password reset email sent successfully' });
   } catch (error) {
     console.error('Forgot password error:', error);
-    res.status(500).json({ error: 'Error sending reset email' });
+    res.status(500).json({ error: 'Error processing password reset request' });
   }
 });
 
@@ -211,6 +225,10 @@ router.post('/forgot-password', async (req, res) => {
 router.post('/reset-password', async (req, res) => {
   try {
     const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token and new password are required' });
+    }
 
     const user = await User.findOne({
       resetPasswordToken: token,
@@ -227,6 +245,24 @@ router.post('/reset-password', async (req, res) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+
+    // Send confirmation email
+    await resend.emails.send({
+      from: 'PokeTrader <noreply@poketrader.com>',
+      to: user.email,
+      subject: 'Your Password Has Been Reset',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Password Reset Successful</h2>
+          <p>Hello ${user.fullName},</p>
+          <p>Your password has been successfully reset. If you did not make this change, please contact us immediately.</p>
+          <hr style="border: 1px solid #eee; margin: 20px 0;">
+          <p style="color: #666; font-size: 12px;">
+            This is an automated message, please do not reply to this email.
+          </p>
+        </div>
+      `
+    });
 
     res.json({ message: 'Password has been reset successfully' });
   } catch (error) {

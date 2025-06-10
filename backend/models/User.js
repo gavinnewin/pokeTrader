@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
   cardCollection: [{
     card: { type: mongoose.Schema.Types.ObjectId, ref: 'Card' },

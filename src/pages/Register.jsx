@@ -4,17 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import AuthLeftPanel from "../components/AuthLeftPanel";
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
-const API = import.meta.env.VITE_API_URL;
 
+// Ensure API URL doesn't end with a slash
+const API = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:5000';
 
 export default function Register() {
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState('');
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm]   = useState('');
-  const [error, setError]       = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
     if (password !== confirm) {
@@ -22,13 +24,25 @@ export default function Register() {
       return;
     }
 
+    if (!fullName || !email || !password) {
+      setError("All fields are required");
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
     try {
+      console.log('Attempting registration with API:', API);
+      
       // First register the user
-      await axios.post(`${API}/api/auth/register`, {
+      const registerRes = await axios.post(`${API}/api/auth/register`, {
         fullName,
         email,
         password
       });
+
+      console.log('Registration successful, attempting login');
 
       // Then automatically log them in
       const loginRes = await axios.post(`${API}/api/auth/login`, {
@@ -38,19 +52,26 @@ export default function Register() {
 
       // Store the user data
       localStorage.setItem("token", loginRes.data.token);
-    localStorage.setItem("fullName", loginRes.data.user.fullName);
-    localStorage.setItem("email", loginRes.data.user.email);
-
+      localStorage.setItem("fullName", loginRes.data.user.fullName);
+      localStorage.setItem("email", loginRes.data.user.email);
 
       // Redirect to home page
       navigate('/home');
     } catch (err) {
-      setError(err.response?.data?.error || "Registration failed");
+      console.error('Registration error:', err.response?.data || err.message);
+      setError(err.response?.data?.error || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    setIsLoading(true);
+    setError('');
+
     try {
+      console.log('Attempting Google signup with API:', API);
+      
       const res = await axios.post(`${API}/api/auth/google-login`, {
         credential: credentialResponse.credential
       });
@@ -62,12 +83,15 @@ export default function Register() {
 
       navigate('/home');
     } catch (err) {
-      setError(err.response?.data?.error || "Google sign up failed");
+      console.error('Google signup error:', err.response?.data || err.message);
+      setError(err.response?.data?.error || "Google sign up failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleError = () => {
-    setError("Google sign up failed");
+    setError("Google sign up failed. Please try again.");
   };
 
   return (
@@ -83,29 +107,39 @@ export default function Register() {
             placeholder="Full Name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            disabled={isLoading}
           />
           <input
             type="email"
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
           <input
             type="password"
             placeholder="Confirm Password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
+            disabled={isLoading}
           />
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <button className="login-btn" onClick={handleRegister}>Register</button>
+          <button 
+            className="login-btn" 
+            onClick={handleRegister}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Registering...' : 'Register'}
+          </button>
 
           <p className="signup-text">
             Already have an account? <a href="/login">Login</a>
@@ -122,6 +156,7 @@ export default function Register() {
               theme="outline"
               size="large"
               width="100%"
+              disabled={isLoading}
             />
           </div>
         </div>
