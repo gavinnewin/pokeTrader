@@ -1,4 +1,3 @@
-
 .home {
   padding: 1.5rem;
   min-height: 100vh;
@@ -13,7 +12,7 @@
 .collection-top {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-template-columns: 2fr 1fr;
   justify-content: center;
 }
 
@@ -30,6 +29,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
+  justify-content: center;
 }
 
 .range-btn {
@@ -70,6 +70,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .current-value {
@@ -90,8 +92,8 @@
 
 .performers-list {
   display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
+  justify-content: center;
+  gap: 1rem;
   flex-wrap: wrap;
   padding: 0.5rem 0;
 }
@@ -198,93 +200,161 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  @apply text-gray-800 dark:text-white;
-  text-align: center;
+  padding: 1rem;
 }
 
 .performer-image-large {
-  width: 300px;
-  height: 400px;
-  object-fit: contain;
-  border-radius: 12px;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 0.5rem;
 }
 
-.profile-section {
-  @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm p-8 mb-8;
+/* Tablet styles */
+@media (max-width: 768px) {
+  .home {
+    padding: 1rem;
+  }
+
+  .collection-top {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .current-value {
+    font-size: 1.25rem;
+  }
+
+  .performers-list {
+    justify-content: center;
+  }
+
+  .performer-card {
+    flex: 1 1 8rem;
+    max-width: 8rem;
+    min-height: 15rem;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .portfolio-item img {
+    height: 150px;
+  }
 }
 
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
+/* Mobile styles */
+@media (max-width: 480px) {
+  .home {
+    padding: 0.5rem;
+  }
 
-.profile-avatar {
-  flex-shrink: 0;
-}
+  .collection-card {
+    padding: 0.75rem;
+    margin: 0 -0.5rem;
+    width: calc(100% + 1rem);
+  }
 
-.avatar-placeholder {
-  width: 6rem;
-  height: 6rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 2.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
+  .collection-header {
+    padding: 0 0.5rem;
+  }
 
-.profile-info {
-  flex-grow: 1;
-}
+  .range-buttons {
+    padding: 0 0.5rem;
+  }
 
-.profile-name {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0;
-  @apply dark:text-white;
-}
+  .collection-card,
+  .performers-card {
+    padding: 1rem;
+    width: 100%;
+    margin: 0;
+  }
 
-.profile-email {
-  font-size: 1rem;
-  color: #6b7280;
-  margin: 0.5rem 0 0;
-  @apply dark:text-gray-400;
-}
+  .collection-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
-  @apply dark:border-gray-700;
-}
+  .current-value {
+    font-size: 1.25rem;
+  }
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
+  .range-buttons {
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+  }
 
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
-  @apply dark:text-white;
-}
+  .range-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
 
-.stat-label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  @apply dark:text-gray-400;
+  .performers-list {
+    gap: 0.75rem;
+  }
+
+  .performer-card {
+    padding: 0.75rem;
+  }
+
+  .performer-card img {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .card-info {
+    gap: 0.25rem;
+  }
+
+  .card-name {
+    font-size: 0.875rem;
+  }
+
+  .card-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .card-price {
+    font-size: 0.875rem;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .portfolio-item {
+    padding: 0.75rem;
+  }
+
+  .portfolio-item img {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+  }
+
+  .info {
+    gap: 0.25rem;
+  }
+
+  .name {
+    font-size: 0.875rem;
+  }
+
+  .equity {
+    font-size: 0.75rem;
+  }
+
+  .footer {
+    font-size: 0.75rem;
+    padding: 1rem 0;
+  }
 }
 
 :root[class~="dark"] .home {

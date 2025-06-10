@@ -35,12 +35,12 @@ const formatXAxisLabel = (dateStr) => {
   const now = new Date();
   const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
 
-  // For 1D view, show time
+  // For 1D view, show time without AM/PM
   if (diffDays === 0) {
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true 
+      hour12: false 
     });
   }
   
@@ -96,7 +96,7 @@ export default function LineChart({ data }) {
     <ResponsiveContainer width="100%" height={300}>
       <RechartsLineChart 
         data={processedData} 
-        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
       >
         <defs>
           <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
@@ -111,7 +111,7 @@ export default function LineChart({ data }) {
           tick={{ fill: '#888' }}
           stroke="#444"
           interval={Math.floor(processedData.length / numTicks)}
-          minTickGap={50}
+          minTickGap={30}
           height={60}
           tickMargin={10}
         />
@@ -121,7 +121,7 @@ export default function LineChart({ data }) {
           tick={{ fill: '#888' }}
           stroke="#444"
           orientation="left"
-          width={80}
+          width={60}
         />
         <Tooltip
           contentStyle={{ 

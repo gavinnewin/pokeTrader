@@ -1,11 +1,19 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 .profile-page {
-  padding: 2rem;
-  min-height: 100vh;
   @apply bg-gray-50 dark:bg-[#1a1a1a];
+  padding: 2rem;
+  padding-left: 7rem;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-section {
   @apply bg-white dark:bg-[#242424] rounded-lg shadow-sm p-8 mb-8;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-header {
@@ -436,4 +444,70 @@
 :root[class~="dark"] select option {
   background-color: #222;
   color: #fff;
+}
+
+/* Mobile styles */
+@media (max-width: 482px) {
+  .profile-page {
+    padding: 0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-bottom: 2rem;
+    margin: 0;
+    width: 100%;
+  }
+
+  .profile-section {
+    padding: 0.75rem;
+    padding-bottom: 1.5rem;
+    margin: 0;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .profile-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    margin-top: 2rem;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    padding: 0;
+    margin-top: 3rem;
+  }
+
+  .portfolio-card {
+    padding: 0.75rem;
+  }
+
+  .portfolio-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .portfolio-card p {
+    font-size: 0.8rem;
+  }
+
+  /* Graph x-axis text size */
+  .recharts-cartesian-axis-tick-value {
+    font-size: 8px !important;
+  }
 }
